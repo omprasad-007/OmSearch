@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+env/
+venv/
+ENV/
+
+# Databases & local data
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.db.gz
+*.jsonl.gz
+om_search_local.db
+om_search_fts.db
+om_fallback_store.json
+om_inverted_index.pkl
+data/
+backend/data/
+*.log
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+dist/
+.vite/
+
+# Docker volumes
+docker-data/
+opensearch-data/
+postgres-data/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

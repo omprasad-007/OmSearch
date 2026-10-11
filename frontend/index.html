@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OM Search — Independent Web Search Engine</title>
+    <meta name="description" content="OM Search is an independent general-purpose web search engine with dedicated crawling, BM25 indexing, and relevance ranking." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <!-- Suppress Tailwind CDN production notice in development console -->
+    <script>
+      (function() {
+        const _origWarn = console.warn;
+        console.warn = function(...args) {
+          if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+          _origWarn.apply(console, args);
+        };
+      })();
+    </script>
+
+    <!-- Tailwind CDN with Custom Editorial Theme -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              surface: "#fbf9f5",
+              "surface-bright": "#fbf9f5",
+              "surface-dim": "#dbdad6",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f5f3f0",
+              "surface-container": "#efeeea",
+              "surface-container-high": "#e9e8e4",
+              "surface-container-highest": "#e4e2df",
+              "on-surface": "#1b1c1a",
+              "on-surface-variant": "#57423b",
+              primary: "#a03b14",
+              "primary-container": "#c0532a",
+              "on-primary": "#ffffff",
+              secondary: "#5e5f5b",
+              "secondary-container": "#e1e0db",
+              "secondary-fixed": "#e4e2dd",
+              "secondary-fixed-dim": "#c7c6c2",
+              tertiary: "#37654d",
+              "tertiary-container": "#507e65",
+              "tertiary-fixed": "#bceecf",
+              "tertiary-fixed-dim": "#a0d2b4",
+              error: "#ba1a1a",
+              outline: "#8a726a",
+              "outline-variant": "#dec0b7",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Newsreader", "serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-[#fbf9f5] text-[#1b1c1a] antialiased min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

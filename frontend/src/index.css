@@ -1,0 +1,104 @@
+/* OM Search - Global Styles & Brand Animations */
+
+@keyframes pulseRing {
+  0%, 100% {
+    transform: scale(1);
+    stroke-opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.04);
+    stroke-opacity: 1;
+  }
+}
+
+@keyframes traceArc {
+  0% {
+    stroke-dashoffset: 280;
+    transform: rotate(0deg);
+  }
+  50% {
+    stroke-dashoffset: 70;
+    transform: rotate(180deg);
+  }
+  100% {
+    stroke-dashoffset: 280;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floatCore {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes radarWave {
+  0% {
+    r: 24px;
+    opacity: 0.6;
+  }
+  80% {
+    r: 42px;
+    opacity: 0;
+  }
+  100% {
+    r: 44px;
+    opacity: 0;
+  }
+}
+
+.orbit-ring {
+  transform-origin: 50px 50px;
+  animation: traceArc 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.base-ring {
+  transform-origin: 50px 50px;
+  animation: pulseRing 4s ease-in-out infinite;
+}
+
+.pulse-radar {
+  transform-origin: 50px 50px;
+  animation: radarWave 3s ease-out infinite;
+}
+
+.center-symbol {
+  transform-origin: 50px 50px;
+  animation: floatCore 3s ease-in-out infinite;
+}
+
+/* Material Symbols Outlined helper */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #dec0b7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a03b14;
+}

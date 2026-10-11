@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="omGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D9653B"/>
+      <stop offset="100%" stop-color="#E87C55"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="#FBF9F5"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#E4E2DA" stroke-width="2"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="url(#omGrad)" stroke-dasharray="140 140" stroke-linecap="round" stroke-width="3"/>
+  <g>
+    <circle cx="44" cy="50" fill="none" r="14" stroke="#20211F" stroke-width="3"/>
+    <circle cx="44" cy="50" fill="none" r="7" stroke="#D9653B" stroke-width="2.5"/>
+    <path d="M44 50 C44 42, 54 42, 54 50 V64" fill="none" stroke="#20211F" stroke-linecap="round" stroke-width="3"/>
+    <path d="M54 50 C54 42, 64 42, 64 50 V64" fill="none" stroke="#D9653B" stroke-linecap="round" stroke-width="3"/>
+    <circle cx="50" cy="22" fill="#D9653B" r="2.5"/>
+  </g>
+</svg>

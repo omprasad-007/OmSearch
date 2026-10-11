@@ -1,0 +1,5 @@
+cluster.name: om-search-cluster
+node.name: om-node-1
+discovery.type: single-node
+network.host: 0.0.0.0
+plugins.security.disabled: true

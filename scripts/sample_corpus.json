@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://docs.python.org/3/tutorial/introduction.html?utm_source=sample_test",
+    "title": "An Informal Introduction to Python - Python 3 Documentation",
+    "content": "Python is an easy to learn, powerful programming language. It has efficient high-level data structures and a simple but effective approach to object-oriented programming. Python's elegant syntax and dynamic typing, together with its interpreted nature, make it an ideal language for scripting and rapid application development in many areas on most platforms. In the following examples, input and output are distinguished by the presence or absence of prompts. Numbers, strings, and lists are the primary native data structures.",
+    "snippet": "Python is an easy to learn, powerful programming language with efficient high-level data structures and dynamic typing.",
+    "language": "en",
+    "published_at": "2024-01-15T00:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://opensearch.org/docs/latest/getting-started/overview/",
+    "title": "What is OpenSearch? - OpenSearch Documentation",
+    "content": "OpenSearch is a community-driven, open-source search and analytics suite derived from Apache 2.0-licensed Elasticsearch 7.10.2 & Kibana 7.10.2. It consists of a search engine daemon, OpenSearch, and a visualization and user interface, OpenSearch Dashboards. OpenSearch provides a distributed, search engine with BM25 relevance scoring, vector search capabilities, full-text analyzers, and multi-tenant observability analytics.",
+    "snippet": "OpenSearch is a community-driven, open-source search and analytics suite offering BM25 retrieval and vector search.",
+    "language": "en",
+    "published_at": "2024-03-10T12:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://www.postgresql.org/docs/current/intro-whatis.html",
+    "title": "What is PostgreSQL? - PostgreSQL Documentation",
+    "content": "PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. It runs on all major operating systems, has been ACID-compliant since 2001, and has powerful add-ons such as the popular PostGIS geospatial database extender.",
+    "snippet": "PostgreSQL is an open source object-relational database system known for reliability, data integrity, and ACID compliance.",
+    "language": "en",
+    "published_at": "2024-02-01T08:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "title": "First Steps - FastAPI Documentation",
+    "content": "FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.8+ based on standard Python type hints. Key features include high speed on par with NodeJS and Go, fast to code, fewer bugs, intuitive editor support, easy to learn, short code, and standards-based compatibility with OpenAPI and JSON Schema.",
+    "snippet": "FastAPI is a modern, fast Python web framework for building APIs with automatic OpenAPI schema generation.",
+    "language": "en",
+    "published_at": "2024-04-05T10:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://react.dev/learn",
+    "title": "Quick Start - React Documentation",
+    "content": "React lets you build user interfaces out of individual pieces called components. Create your own React components like Thumbnail, LikeButton, and Video. Then combine them into entire screens, pages, and apps. React components are JavaScript functions that return markup using JSX syntax. State allows components to remember information like user input.",
+    "snippet": "React lets you build user interfaces out of individual pieces called components with interactive state.",
+    "language": "en",
+    "published_at": "2024-02-20T14:30:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/about.html",
+    "title": "About SQLite - SQLite Database Engine",
+    "content": "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine. SQLite is the most used database engine in the world. SQLite is built into all mobile phones and most computers and comes bundled inside countless other applications that people use every day. The source code for SQLite is in the public domain.",
+    "snippet": "SQLite is an in-process library that implements a self-contained, serverless, zero-configuration SQL database engine.",
+    "language": "en",
+    "published_at": "2024-01-01T00:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+    "title": "An Overview of HTTP - MDN Web Docs",
+    "content": "HTTP is a protocol which allows the fetching of resources, such as HTML documents. It is the foundation of any data exchange on the Web and it is a client-server protocol, which means requests are initiated by the recipient, usually the Web browser. A complete document is reconstructed from the different sub-documents fetched, such as text, layout description, images, videos, scripts, and more.",
+    "snippet": "HTTP is an extensible client-server protocol used to transmit hypermedia documents across the World Wide Web.",
+    "language": "en",
+    "published_at": "2024-05-12T16:00:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+    "title": "HTTP Response Status Codes - MDN Web Docs",
+    "content": "HTTP response status codes indicate whether a specific HTTP request has been successfully completed. Responses are grouped in five classes: informational responses (100–199), successful responses (200–299), redirection messages (300–399), client error responses (400–499), and server error responses (500–599). Common status codes include 200 OK, 301 Moved Permanently, 404 Not Found, and 500 Internal Server Error.",
+    "snippet": "HTTP response status codes indicate the outcome of HTTP requests across 1xx, 2xx, 3xx, 4xx, and 5xx classes.",
+    "language": "en",
+    "published_at": "2024-05-12T16:15:00Z",
+    "document_type": "documentation",
+    "http_status": 200
+  }
+]

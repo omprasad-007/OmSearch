@@ -1,0 +1,80 @@
+import React from 'react';
+import { X, Activity } from 'lucide-react';
+import type { SearchStats } from '../types';
+
+interface StatsModalProps {
+  stats: SearchStats | null;
+  onClose: () => void;
+}
+
+export const StatsModal: React.FC<StatsModalProps> = ({ stats, onClose }) => {
+  return (
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="stats-card" onClick={(e) => e.stopPropagation()}>
+        <div className="stats-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Activity size={20} color="#3b82f6" />
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>OM Engine Index Stats</h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {stats ? (
+          <div>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-label">Total Documents</span>
+                <p className="stat-val">{stats.total_documents.toLocaleString()}</p>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Engine Status</span>
+                <p className="stat-val" style={{ color: stats.status === 'online' ? '#10b981' : '#f59e0b' }}>
+                  {stats.status}
+                </p>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Index Alias</span>
+                <p className="stat-val" style={{ fontSize: '0.95rem' }}>{stats.index_alias}</p>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Indexed Domains</span>
+                <p className="stat-val">{stats.domains_count}</p>
+              </div>
+            </div>
+
+            {stats.top_domains && stats.top_domains.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '8px' }}>Top Indexed Domains</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {stats.top_domains.map((dom, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '0.85rem',
+                        padding: '6px 10px',
+                        background: 'var(--bg-tertiary)',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <span style={{ fontFamily: 'var(--font-mono)' }}>{dom.domain}</span>
+                      <span style={{ color: '#94a3b8' }}>{dom.doc_count} docs</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p style={{ color: '#94a3b8' }}>Loading engine metrics...</p>
+        )}
+      </div>
+    </div>
+  );
+};

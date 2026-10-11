@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: om-search-backend
+    runtime: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8000
+      - key: OPERATOR_API_KEY
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: "https://om-search-backend.onrender.com/api/v1/storage/google-drive/callback"
+      - key: GOOGLE_DRIVE_ROOT_FOLDER_NAME
+        value: "OM-Search-Data"
+      - key: GOOGLE_DRIVE_STORAGE_BUDGET_BYTES
+        value: "5497558138880"
+      - key: GOOGLE_DRIVE_TEMP_DIR
+        value: "/tmp/drive_spool"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: om-search-postgres
+          property: connectionString
+      - key: OPENSEARCH_HOST
+        sync: false
+      - key: OPENSEARCH_PORT
+        value: "9200"
+
+databases:
+  - name: om-search-postgres
+    plan: starter
+    databaseName: om_search
+    user: om_user

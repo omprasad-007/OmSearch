@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "omsearch",
     "public": "frontend/dist",
     "ignore": [
       "firebase.json",
@@ -7,10 +8,6 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "/api/**",
-        "destination": "/index.html"
-      },
       {
         "source": "**",
         "destination": "/index.html"

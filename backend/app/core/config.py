@@ -76,6 +76,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "https://omsearch.web.app",
+        "https://omsearch.firebaseapp.com",
+        "https://one-for-all-5e842.web.app",
+        "https://one-for-all-5e842.firebaseapp.com",
     ]
 
     @property

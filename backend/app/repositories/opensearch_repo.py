@@ -381,12 +381,15 @@ class OpenSearchRepository:
                         with open(c_path, "r", encoding="utf-8") as f:
                             sample_docs = json.load(f)
                         from app.ingestion.normalizer import normalize_url, compute_url_id
+                        from urllib.parse import urlparse
                         for s in sample_docs:
                             raw_u = s.get("url", "")
                             canon = s.get("canonical_url") or (normalize_url(raw_u) if raw_u else "")
                             s_id = s.get("id") or (compute_url_id(canon) if canon else raw_u)
                             s["id"] = s_id
                             s["canonical_url"] = canon
+                            if not s.get("domain") and raw_u:
+                                s["domain"] = urlparse(raw_u).netloc
                             if s_id and s_id not in self._fallback_store:
                                 self._fallback_store[s_id] = s
                     except Exception:

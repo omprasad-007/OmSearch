@@ -283,8 +283,8 @@ class SQLiteFTSRepository:
 
             if domain_filter or lang_filter:
                 count_sql = f"""
-                SELECT COUNT(*) FROM documents_fts f
-                JOIN documents d ON f.rowid = d.rowid
+                SELECT COUNT(*) FROM documents_fts
+                JOIN documents d ON documents_fts.rowid = d.rowid
                 {base_where}
                 """
                 cur = conn.execute(count_sql, params)
@@ -294,10 +294,10 @@ class SQLiteFTSRepository:
                 SELECT 
                     d.id, d.url, d.canonical_url, d.domain, d.title, d.snippet, d.content,
                     d.language, d.document_type, d.published_at, d.indexed_at, d.pagerank,
-                    snippet(f, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
-                    -bm25(f, 5.0, 2.0, 1.0) AS bm25_score
-                FROM documents_fts f
-                JOIN documents d ON f.rowid = d.rowid
+                    snippet(documents_fts, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
+                    -bm25(documents_fts, 5.0, 2.0, 1.0) AS bm25_score
+                FROM documents_fts
+                JOIN documents d ON documents_fts.rowid = d.rowid
                 {base_where}
                 ORDER BY (bm25_score * (1.0 + COALESCE(d.pagerank, 0.0) * 0.5)) DESC
                 LIMIT ? OFFSET ?
@@ -313,7 +313,7 @@ class SQLiteFTSRepository:
                 SELECT 
                     d.id, d.url, d.canonical_url, d.domain, d.title, d.snippet, d.content,
                     d.language, d.document_type, d.published_at, d.indexed_at, d.pagerank,
-                    snippet(f, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
+                    snippet(documents_fts, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
                     -ranked.score AS bm25_score
                 FROM (
                     SELECT rowid, bm25(documents_fts, 5.0, 2.0, 1.0) AS score
@@ -322,7 +322,7 @@ class SQLiteFTSRepository:
                     ORDER BY score ASC
                     LIMIT ? OFFSET ?
                 ) ranked
-                JOIN documents_fts f ON f.rowid = ranked.rowid
+                JOIN documents_fts ON documents_fts.rowid = ranked.rowid
                 JOIN documents d ON d.rowid = ranked.rowid
                 ORDER BY ranked.score ASC
                 """

@@ -472,7 +472,16 @@ class GoogleDriveStorageService:
 
             response = None
             while response is None:
-                status, response = request.next_chunk()
+                for attempt in range(1, 21):
+                    try:
+                        status, response = request.next_chunk(num_retries=5)
+                        break
+                    except Exception as e:
+                        if attempt >= 20:
+                            raise
+                        logger.warning("Drive upload chunk retry %d/20 for %s: %s", attempt, batch_id, e)
+                        import time
+                        time.sleep(min(25, 2 ** min(attempt, 4)))
                 if status:
                     logger.debug("Uploading %s: %d%%", batch_id, int(status.progress() * 100))
 

@@ -76,3 +76,6 @@ class SearchStatsResponse(BaseModel):
     domains_count: int
     top_domains: List[Dict[str, Any]]
     storage_bytes: Optional[int] = None
+    live_crawled_count: Optional[int] = 0
+    cloud_archived_count: Optional[int] = 0
+    cloud_storage_formatted: Optional[str] = "0 MB"

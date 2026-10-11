@@ -424,6 +424,12 @@ class SQLiteFTSRepository:
         cur = conn.execute("SELECT COUNT(*) FROM documents;")
         total_docs = cur.fetchone()[0]
 
+        cur = conn.execute("SELECT COUNT(DISTINCT domain) FROM documents WHERE domain IS NOT NULL AND domain != '';")
+        domains_count = cur.fetchone()[0]
+
+        cur = conn.execute("SELECT COUNT(*) FROM documents WHERE document_type = 'live_web_page';")
+        live_crawled_count = cur.fetchone()[0]
+
         cur = conn.execute("""
         SELECT domain, COUNT(*) as cnt 
         FROM documents 
@@ -434,12 +440,38 @@ class SQLiteFTSRepository:
         """)
         top_domains = [{"domain": r["domain"], "doc_count": r["cnt"]} for r in cur.fetchall()]
 
+        # Read live ingestion telemetry if present
+        cloud_archived_count = 0
+        cloud_storage_formatted = "0 MB"
+        try:
+            import json
+            from pathlib import Path
+            status_candidates = [
+                Path(__file__).resolve().parents[2] / "data" / "drive_ingestion_live_status.json",
+                Path("data/drive_ingestion_live_status.json"),
+                Path("../data/drive_ingestion_live_status.json"),
+            ]
+            for status_p in status_candidates:
+                if status_p.exists():
+                    with open(status_p, "r", encoding="utf-8") as f:
+                        s_data = json.load(f)
+                        cloud_archived_count = s_data.get("total_documents_archived", 0)
+                        cloud_storage_formatted = s_data.get("formatted_cloud_storage", "0 MB")
+                        if not live_crawled_count:
+                            live_crawled_count = s_data.get("live_crawled_pages_count", 0)
+                    break
+        except Exception:
+            pass
+
         return {
             "total_documents": total_docs,
+            "live_crawled_count": live_crawled_count,
+            "cloud_archived_count": cloud_archived_count,
+            "cloud_storage_formatted": cloud_storage_formatted,
             "index_name": "sqlite_fts5_om_index",
             "index_alias": "om_documents",
             "status": "online_fts5",
-            "domains_count": len(top_domains),
+            "domains_count": domains_count,
             "top_domains": top_domains,
         }
 

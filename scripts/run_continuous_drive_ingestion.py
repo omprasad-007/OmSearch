@@ -230,6 +230,12 @@ class OvernightDriveIngestor:
                             try:
                                 self.crawled_doc_buffer.put_nowait(doc)
                                 self.live_crawled_docs_count += 1
+                                # Immediately index into local SQLite FTS5 for instant searchability
+                                try:
+                                    from app.repositories.sqlite_fts_repo import get_sqlite_fts_repo
+                                    get_sqlite_fts_repo().index_document(doc)
+                                except Exception:
+                                    pass
                             except queue.Full:
                                 pass
 

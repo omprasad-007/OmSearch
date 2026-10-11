@@ -28,6 +28,11 @@ export const SearchResultCard: React.FC<SearchResultCardProps> = ({ item }) => {
     <article className="result-card">
       <div className="result-breadcrumb">
         <span className="domain-badge">{item.domain}</span>
+        {item.document_type === 'live_web_page' && (
+          <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.12)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+            Live Crawled
+          </span>
+        )}
         <span className="result-url" title={item.url}>{item.url}</span>
         <button
           onClick={handleCopy}

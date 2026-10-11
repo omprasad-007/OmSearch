@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../api';
 
 interface StorageModalProps {
   isOpen: boolean;
@@ -49,14 +50,14 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
   const fetchStatus = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/v1/storage/google-drive/status', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/storage/google-drive/status`, {
         headers: { 'X-Operator-Token': operatorToken },
       });
       if (res.ok) {
         const data = await res.json();
         setStatus(data);
       }
-      const bRes = await fetch('/api/v1/storage/batches?size=10', {
+      const bRes = await fetch(`${API_BASE_URL}/api/v1/storage/batches?size=10`, {
         headers: { 'X-Operator-Token': operatorToken },
       });
       if (bRes.ok) {
@@ -79,7 +80,7 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
   const handleConnect = async () => {
     try {
       setMessage('Initiating Google OAuth 2.0 flow...');
-      const res = await fetch('/api/v1/storage/google-drive/connect', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/storage/google-drive/connect`, {
         method: 'POST',
         headers: { 'X-Operator-Token': operatorToken },
       });
@@ -97,7 +98,7 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
 
   const handleDisconnect = async () => {
     try {
-      const res = await fetch('/api/v1/storage/google-drive/disconnect', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/storage/google-drive/disconnect`, {
         method: 'POST',
         headers: { 'X-Operator-Token': operatorToken },
       });
@@ -113,7 +114,7 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
   const handleReconcile = async () => {
     try {
       setMessage('Reconciling pending storage spools...');
-      const res = await fetch('/api/v1/storage/reconcile', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/storage/reconcile`, {
         method: 'POST',
         headers: { 'X-Operator-Token': operatorToken },
       });
@@ -127,7 +128,7 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
 
   const handleRetryBatch = async (batchId: string) => {
     try {
-      const res = await fetch(`/api/v1/storage/batches/${batchId}/retry`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/storage/batches/${batchId}/retry`, {
         method: 'POST',
         headers: { 'X-Operator-Token': operatorToken },
       });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Cpu, Play, Pause, RefreshCw, ShieldCheck, Database, Layers, Compass, HardDrive } from 'lucide-react';
+import { API_BASE_URL } from '../api';
 
 interface IngestionDashboardProps {
   onClose: () => void;
@@ -15,7 +16,7 @@ export const IngestionDashboardModal: React.FC<IngestionDashboardProps> = ({ onC
 
   const fetchTelemetry = async () => {
     try {
-      const resp = await fetch('/api/v1/ingestion/status', {
+      const resp = await fetch(`${API_BASE_URL}/api/v1/ingestion/status`, {
         headers: { 'X-Operator-Token': OPERATOR_TOKEN },
       });
       if (resp.ok) {
@@ -38,7 +39,7 @@ export const IngestionDashboardModal: React.FC<IngestionDashboardProps> = ({ onC
   const executeControl = async (endpoint: string, options: RequestInit = {}) => {
     try {
       setActionMessage('Processing control command...');
-      const resp = await fetch(`/api/v1/ingestion/${endpoint}`, {
+      const resp = await fetch(`${API_BASE_URL}/api/v1/ingestion/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ export const IngestionDashboardModal: React.FC<IngestionDashboardProps> = ({ onC
 
   const handlePlanArchive = async () => {
     try {
-      const resp = await fetch('/api/v1/ingestion/archive/plan', {
+      const resp = await fetch(`${API_BASE_URL}/api/v1/ingestion/archive/plan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

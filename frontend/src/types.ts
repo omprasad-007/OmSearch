@@ -41,4 +41,7 @@ export interface SearchStats {
   domains_count: number;
   top_domains: { domain: string; doc_count: number }[];
   storage_bytes?: number;
+  live_crawled_count?: number;
+  cloud_archived_count?: number;
+  cloud_storage_formatted?: string;
 }

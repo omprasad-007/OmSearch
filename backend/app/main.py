@@ -50,10 +50,10 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("OpenSearch initialization warning: %s", e)
 
-    # Ensure rich multi-domain starter index (2,500+ documents across 50+ unique domains)
+    # Ensure rich multi-domain index with 13,500+ live crawled real-web pages
     try:
         from app.ingestion.starter_corpus import ensure_starter_index, run_daily_render_crawler
-        ensure_starter_index(min_docs=2500)
+        ensure_starter_index(min_docs=15000)
         import asyncio
         asyncio.create_task(run_daily_render_crawler(daily_target=1000))
         logger.info("Starter corpus ensured & daily incremental crawler scheduled.")

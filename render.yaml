@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: om-search-backend
+    name: omsearch
     runtime: python
     region: oregon
     plan: free
@@ -22,7 +22,7 @@ services:
       - key: GOOGLE_CLIENT_SECRET
         sync: false
       - key: GOOGLE_REDIRECT_URI
-        value: "https://om-search-backend.onrender.com/api/v1/storage/google-drive/callback"
+        value: "https://omsearch.onrender.com/api/v1/storage/google-drive/callback"
       - key: GOOGLE_DRIVE_ROOT_FOLDER_NAME
         value: "OM-Search-Data"
       - key: GOOGLE_DRIVE_ROOT_FOLDER_ID

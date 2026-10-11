@@ -63,6 +63,7 @@ opensearch-data/
 postgres-data/
 
 # IDE & OS
+.firebase/
 .vscode/
 .idea/
 .DS_Store

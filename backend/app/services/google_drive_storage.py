@@ -248,6 +248,27 @@ class GoogleDriveStorageService:
                 .first()
             )
             if not cred_row:
+                # Cloud runner / CI / GitHub Actions fallback from environment
+                refresh_token = (
+                    os.environ.get("GOOGLE_REFRESH_TOKEN")
+                    or os.environ.get("GDRIVE_REFRESH_TOKEN")
+                )
+                client_id = os.environ.get("GOOGLE_CLIENT_ID") or self.settings.GOOGLE_CLIENT_ID
+                client_secret = os.environ.get("GOOGLE_CLIENT_SECRET") or self.settings.GOOGLE_CLIENT_SECRET
+                if refresh_token and client_id and client_secret:
+                    creds = Credentials(
+                        token=None,
+                        refresh_token=refresh_token,
+                        token_uri="https://oauth2.googleapis.com/token",
+                        client_id=client_id,
+                        client_secret=client_secret,
+                        scopes=self.settings.GOOGLE_DRIVE_SCOPES,
+                    )
+                    try:
+                        creds.refresh(Request())
+                        return creds
+                    except Exception as e:
+                        logger.error("Failed to build/refresh Google Drive credentials from environment: %s", e)
                 return None
 
             token_data = json.loads(self._decrypt(cred_row.encrypted_tokens))
@@ -441,15 +462,29 @@ class GoogleDriveStorageService:
             if not creds:
                 raise PermissionError("Google Drive is not connected or authorization is revoked.")
 
+            service = build("drive", "v3", credentials=creds, cache_discovery=False)
+
             cred_row = (
                 db.query(DriveOAuthCredential)
                 .filter(DriveOAuthCredential.is_active == 1)
                 .first()
             )
-            subfolders = json.loads(cred_row.subfolder_ids_json or "{}")
-            folder_id = subfolders.get(subfolder_name) or cred_row.root_folder_id
+            subfolders = {}
+            folder_id = None
+            if cred_row:
+                try:
+                    subfolders = json.loads(cred_row.subfolder_ids_json or "{}")
+                except Exception:
+                    pass
+                folder_id = subfolders.get(subfolder_name) or cred_row.root_folder_id
 
-            service = build("drive", "v3", credentials=creds, cache_discovery=False)
+            if not folder_id:
+                root_id = (
+                    os.environ.get("GOOGLE_DRIVE_ROOT_FOLDER_ID")
+                    or self.settings.GOOGLE_DRIVE_ROOT_FOLDER_ID
+                    or "1HSmEYSlw57hQkW4FBLft_-11e6sR72Qk"
+                )
+                folder_id = self._get_or_create_folder(service, subfolder_name, parent_id=root_id)
 
             file_metadata = {
                 "name": p.name,

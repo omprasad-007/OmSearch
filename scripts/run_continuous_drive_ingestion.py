@@ -30,6 +30,7 @@ import threading
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Set, Optional
+from urllib.parse import urlparse
 
 import httpx
 

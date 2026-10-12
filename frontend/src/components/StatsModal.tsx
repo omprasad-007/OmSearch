@@ -40,7 +40,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onClose }) => {
               <div className="stat-item">
                 <span className="stat-label">Google Drive 5 TB Archive</span>
                 <p className="stat-val" style={{ color: '#f59e0b', fontSize: '0.9rem' }}>
-                  {stats.cloud_archived_count ? `${stats.cloud_archived_count.toLocaleString()} docs` : '4.18M docs'}
+                  {stats.cloud_archived_count ? `${stats.cloud_archived_count.toLocaleString()} docs` : '7.7M+ docs'}
                 </p>
               </div>
               <div className="stat-item">

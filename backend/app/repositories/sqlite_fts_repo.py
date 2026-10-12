@@ -464,11 +464,22 @@ class SQLiteFTSRepository:
                     break
         except Exception:
             pass
-
-        if cloud_archived_count < 4385000:
-            cloud_archived_count = 4385000
-            if cloud_storage_formatted == "0 MB":
-                cloud_storage_formatted = "615.86 MB"
+        try:
+            from app.repositories.database import get_db_manager, DriveUploadBatch
+            from sqlalchemy import func
+            db = get_db_manager().get_session()
+            db_docs = db.query(func.sum(DriveUploadBatch.record_count)).filter(DriveUploadBatch.upload_status == "verified").scalar()
+            db_bytes = db.query(func.sum(DriveUploadBatch.compressed_bytes)).filter(DriveUploadBatch.upload_status == "verified").scalar()
+            db.close()
+            if db_docs and int(db_docs) > cloud_archived_count:
+                cloud_archived_count = int(db_docs)
+                if db_bytes:
+                    if db_bytes >= 1024**3:
+                        cloud_storage_formatted = f"{db_bytes / (1024**3):.2f} GB"
+                    else:
+                        cloud_storage_formatted = f"{db_bytes / (1024**2):.2f} MB"
+        except Exception:
+            pass
 
         return {
             "total_documents": total_docs,

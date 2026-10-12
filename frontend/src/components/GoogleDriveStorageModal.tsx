@@ -23,6 +23,7 @@ interface StorageStatus {
     verified_uploaded: number;
     pending_uploads: number;
     failed_uploads: number;
+    total_documents_archived?: number;
     total_compressed_bytes_archived: number;
   };
 }
@@ -263,8 +264,14 @@ export const GoogleDriveStorageModal: React.FC<StorageModalProps> = ({ isOpen, o
                 <strong className="text-white">{status?.batch_statistics?.total_batches || 0}</strong>
               </div>
               <div>
-                <span className="text-slate-400">Archived:</span>{' '}
+                <span className="text-slate-400">Archived Size:</span>{' '}
                 <strong className="text-blue-300">{formatBytes(status?.batch_statistics?.total_compressed_bytes_archived)}</strong>
+              </div>
+              <div className="col-span-2 pt-1 border-t border-slate-700/50 flex justify-between items-center">
+                <span className="text-slate-400">Total Archived Docs:</span>{' '}
+                <strong className="text-orange-400 text-sm font-mono">
+                  {(status?.batch_statistics?.total_documents_archived || 0).toLocaleString()} pages
+                </strong>
               </div>
             </div>
           </div>

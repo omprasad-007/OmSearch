@@ -389,6 +389,7 @@ class GoogleDriveStorageService:
             pending_batches = db.query(DriveUploadBatch).filter(DriveUploadBatch.upload_status.in_(["pending", "uploading"])).count()
             from sqlalchemy import func
             total_bytes_uploaded = db.query(func.sum(DriveUploadBatch.compressed_bytes)).filter(DriveUploadBatch.upload_status == "verified").scalar() or 0
+            total_docs_uploaded = db.query(func.sum(DriveUploadBatch.record_count)).filter(DriveUploadBatch.upload_status == "verified").scalar() or 0
 
             return {
                 "connected": True,
@@ -407,6 +408,7 @@ class GoogleDriveStorageService:
                     "verified_uploaded": uploaded_batches,
                     "pending_uploads": pending_batches,
                     "failed_uploads": failed_batches,
+                    "total_documents_archived": int(total_docs_uploaded),
                     "total_compressed_bytes_archived": int(total_bytes_uploaded),
                 },
                 "connected_at": cred_row.connected_at.isoformat() if (cred_row and cred_row.connected_at) else datetime.now(timezone.utc).isoformat(),

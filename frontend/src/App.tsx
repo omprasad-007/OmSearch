@@ -51,7 +51,7 @@ export const App: React.FC = () => {
     fetchStats().then((s) => s && setStats(s));
     const interval = setInterval(() => {
       fetchStats().then((s) => s && setStats(s));
-    }, 12000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -520,7 +520,7 @@ export const App: React.FC = () => {
                     >
                       <span className="font-medium text-[#57423b] group-hover:text-[#a03b14]">Drive 5 TB Archive:</span>
                       <span className="font-mono text-[12px] text-[#a03b14] font-semibold underline decoration-dotted group-hover:decoration-solid">
-                        {stats?.cloud_archived_count ? `${(stats.cloud_archived_count / 1000000).toFixed(2)}M pages` : '4.18M pages'}
+                        {stats?.cloud_archived_count ? `${(stats.cloud_archived_count / 1000000).toFixed(2)}M pages` : '7.7M+ pages'}
                       </span>
                     </button>
                     <span className="text-[#c7c6c2] hidden sm:inline select-none">·</span>
@@ -1040,8 +1040,8 @@ export const App: React.FC = () => {
                 <span className="text-[#5e5f5b]">Google Drive 5 TB Cold Archive:</span>
                 <span className="font-mono font-semibold text-[#a03b14]">
                   {stats?.cloud_archived_count && stats.cloud_archived_count > 0
-                    ? `${stats.cloud_archived_count.toLocaleString()} pages (${stats.cloud_storage_formatted || '615.86 MB'})`
-                    : '4,385,000 pages (615.86 MB)'}
+                    ? `${stats.cloud_archived_count.toLocaleString()} pages (${stats.cloud_storage_formatted || '1.12 GB'})`
+                    : '7,700,000+ pages (1.12 GB)'}
                 </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-[#e4e2dd]">

@@ -1,0 +1,506 @@
+[
+  {
+    "url": "https://react.dev/learn",
+    "canonical_url": "https://react.dev/learn",
+    "title": "Quick Start \u2013 React",
+    "snippet": "React UI library official quick start guide, components, jsx, and props.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://react.dev/reference/react",
+    "canonical_url": "https://react.dev/reference/react",
+    "title": "React Reference Overview \u2013 React",
+    "snippet": "React core API hooks, useState, useEffect, useContext, and components.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://react.dev/learn/describing-the-ui",
+    "canonical_url": "https://react.dev/learn/describing-the-ui",
+    "title": "Describing the UI \u2013 React",
+    "snippet": "Learn how to define components, JSX syntax, and rendering in React.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://react.dev/learn/state-a-components-memory",
+    "canonical_url": "https://react.dev/learn/state-a-components-memory",
+    "title": "State: A Component's Memory \u2013 React",
+    "snippet": "Understanding React state management, hooks, and local component memory.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://react.dev/learn/managing-state",
+    "canonical_url": "https://react.dev/learn/managing-state",
+    "title": "Managing State \u2013 React",
+    "snippet": "How to structure and scale state in React applications.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://react.dev/blog",
+    "canonical_url": "https://react.dev/blog",
+    "title": "React Blog \u2013 React",
+    "snippet": "Latest announcements, releases, and architectural developments from the React team.",
+    "domain": "react.dev",
+    "category": "Frontend",
+    "status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/",
+    "canonical_url": "https://fastapi.tiangolo.com/",
+    "title": "FastAPI",
+    "snippet": "FastAPI framework, high performance, easy to learn, fast to code, ready for production.",
+    "domain": "fastapi.tiangolo.com",
+    "category": "Backend APIs",
+    "status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/tutorial/",
+    "canonical_url": "https://fastapi.tiangolo.com/tutorial/",
+    "title": "Tutorial - User Guide - FastAPI",
+    "snippet": "Comprehensive tutorial and user guide for building production REST APIs with FastAPI.",
+    "domain": "fastapi.tiangolo.com",
+    "category": "Backend APIs",
+    "status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/features/",
+    "canonical_url": "https://fastapi.tiangolo.com/features/",
+    "title": "Features - FastAPI",
+    "snippet": "FastAPI key features including automatic Swagger docs, Pydantic data validation, and async/await.",
+    "domain": "fastapi.tiangolo.com",
+    "category": "Backend APIs",
+    "status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/async/",
+    "canonical_url": "https://fastapi.tiangolo.com/async/",
+    "title": "Concurrency and async / await - FastAPI",
+    "snippet": "Deep dive into Python async/await, coroutines, and threadpools in FastAPI.",
+    "domain": "fastapi.tiangolo.com",
+    "category": "Backend APIs",
+    "status": 200
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "canonical_url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "title": "First Steps - FastAPI",
+    "snippet": "Creating your first GET endpoint with FastAPI and running with Uvicorn.",
+    "domain": "fastapi.tiangolo.com",
+    "category": "Backend APIs",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Machine_learning",
+    "canonical_url": "https://en.wikipedia.org/wiki/Machine_learning",
+    "title": "Machine learning - Wikipedia",
+    "snippet": "Machine learning study of computer algorithms that improve automatically through data and experience.",
+    "domain": "en.wikipedia.org",
+    "category": "AI & Science",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+    "canonical_url": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+    "title": "Artificial intelligence - Wikipedia",
+    "snippet": "Artificial intelligence intelligence demonstrated by machines, synthesizing human cognition and perception.",
+    "domain": "en.wikipedia.org",
+    "category": "AI & Science",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Deep_learning",
+    "canonical_url": "https://en.wikipedia.org/wiki/Deep_learning",
+    "title": "Deep learning - Wikipedia",
+    "snippet": "Deep learning artificial neural networks with multiple representation layers for speech and vision.",
+    "domain": "en.wikipedia.org",
+    "category": "AI & Science",
+    "status": 200
+  },
+  {
+    "url": "https://cloud.google.com/blog/products/ai-machine-learning",
+    "canonical_url": "https://cloud.google.com/blog/products/ai-machine-learning",
+    "title": "AI & Machine Learning Blog \u2014 Google Cloud",
+    "snippet": "Google Cloud AI research, foundation models, vertex AI, and machine learning infrastructure.",
+    "domain": "cloud.google.com",
+    "category": "AI & Science",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Quantum_computing",
+    "canonical_url": "https://en.wikipedia.org/wiki/Quantum_computing",
+    "title": "Quantum computing - Wikipedia",
+    "snippet": "Quantum computing computation utilizing quantum mechanics phenomena such as superposition and entanglement.",
+    "domain": "en.wikipedia.org",
+    "category": "Quantum & Physics",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Quantum_mechanics",
+    "canonical_url": "https://en.wikipedia.org/wiki/Quantum_mechanics",
+    "title": "Quantum mechanics - Wikipedia",
+    "snippet": "Quantum mechanics fundamental theory in physics describing the physical properties of nature at atomic scales.",
+    "domain": "en.wikipedia.org",
+    "category": "Quantum & Physics",
+    "status": 200
+  },
+  {
+    "url": "https://blog.google/innovation-and-ai/models-and-research/quantum-computing/",
+    "canonical_url": "https://blog.google/innovation-and-ai/models-and-research/quantum-computing/",
+    "title": "Quantum Computing \u2014 Google Blog",
+    "snippet": "Google Quantum AI lab discoveries, quantum supremacy, Willow processor, and error correction.",
+    "domain": "blog.google",
+    "category": "Quantum & Physics",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Qubit",
+    "canonical_url": "https://en.wikipedia.org/wiki/Qubit",
+    "title": "Qubit - Wikipedia",
+    "snippet": "Qubit quantum bit, the basic unit of quantum information in quantum computing systems.",
+    "domain": "en.wikipedia.org",
+    "category": "Quantum & Physics",
+    "status": 200
+  },
+  {
+    "url": "https://docs.docker.com/",
+    "canonical_url": "https://docs.docker.com/",
+    "title": "Docker Documentation",
+    "snippet": "Home of Docker documentation, container runtime, Dockerfiles, and compose specifications.",
+    "domain": "docs.docker.com",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://docs.docker.com/get-started/",
+    "canonical_url": "https://docs.docker.com/get-started/",
+    "title": "Get Started with Docker",
+    "snippet": "Step-by-step introduction to building, testing, and deploying containerized applications.",
+    "domain": "docs.docker.com",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://docs.docker.com/engine/",
+    "canonical_url": "https://docs.docker.com/engine/",
+    "title": "Docker Engine Overview",
+    "snippet": "Client-server architecture of Docker daemon, containerd runtime, and CLI tools.",
+    "domain": "docs.docker.com",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Docker_(software)",
+    "canonical_url": "https://en.wikipedia.org/wiki/Docker_(software)",
+    "title": "Docker (software) - Wikipedia",
+    "snippet": "Docker OS-level virtualization platform delivering software packages in containers.",
+    "domain": "en.wikipedia.org",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://kubernetes.io/",
+    "canonical_url": "https://kubernetes.io/",
+    "title": "Kubernetes - Production-Grade Container Orchestration",
+    "snippet": "Automated container deployment, horizontal pod autoscaling, and declarative management.",
+    "domain": "kubernetes.io",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://kubernetes.io/docs/home/",
+    "canonical_url": "https://kubernetes.io/docs/home/",
+    "title": "Kubernetes Documentation",
+    "snippet": "Official documentation for Kubernetes clusters, pods, services, ingress, and deployments.",
+    "domain": "kubernetes.io",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://kubernetes.io/docs/concepts/",
+    "canonical_url": "https://kubernetes.io/docs/concepts/",
+    "title": "Kubernetes Concepts",
+    "snippet": "Fundamental concepts of Kubernetes architecture, control plane, kubelet, and etcd.",
+    "domain": "kubernetes.io",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Kubernetes",
+    "canonical_url": "https://en.wikipedia.org/wiki/Kubernetes",
+    "title": "Kubernetes - Wikipedia",
+    "snippet": "Kubernetes open-source container orchestration system originally designed by Google.",
+    "domain": "en.wikipedia.org",
+    "category": "Cloud & DevOps",
+    "status": 200
+  },
+  {
+    "url": "https://www.postgresql.org/",
+    "canonical_url": "https://www.postgresql.org/",
+    "title": "PostgreSQL: The World's Most Advanced Open Source Relational Database",
+    "snippet": "PostgreSQL ACID relational database, MVCC, foreign keys, and extensible data types.",
+    "domain": "postgresql.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.postgresql.org/docs/current/index.html",
+    "canonical_url": "https://www.postgresql.org/docs/current/index.html",
+    "title": "PostgreSQL Documentation",
+    "snippet": "Complete official manual for PostgreSQL SQL syntax, performance tuning, and replication.",
+    "domain": "postgresql.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.postgresql.org/about/",
+    "canonical_url": "https://www.postgresql.org/about/",
+    "title": "About PostgreSQL",
+    "snippet": "History, architectural highlights, and active community behind the PostgreSQL project.",
+    "domain": "postgresql.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/index.html",
+    "canonical_url": "https://www.sqlite.org/index.html",
+    "title": "SQLite Home Page",
+    "snippet": "SQLite small, fast, self-contained, high-reliability, full-featured SQL database engine.",
+    "domain": "sqlite.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/docs.html",
+    "canonical_url": "https://www.sqlite.org/docs.html",
+    "title": "SQLite Documentation",
+    "snippet": "Official documentation, SQL syntax guide, C/C++ interface, and architecture papers.",
+    "domain": "sqlite.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/whentouse.html",
+    "canonical_url": "https://www.sqlite.org/whentouse.html",
+    "title": "Appropriate Uses For SQLite",
+    "snippet": "Guidance on choosing SQLite for embedded applications, local caching, and edge services.",
+    "domain": "sqlite.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/fts5.html",
+    "canonical_url": "https://www.sqlite.org/fts5.html",
+    "title": "SQLite FTS5 Extension",
+    "snippet": "Full-text search engine 5 module for SQLite, tokenizers, ranking BM25, and queries.",
+    "domain": "sqlite.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://www.sqlite.org/wal.html",
+    "canonical_url": "https://www.sqlite.org/wal.html",
+    "title": "Write-Ahead Logging in SQLite",
+    "snippet": "SQLite WAL mode concurrency, atomic commit, and high-throughput write performance.",
+    "domain": "sqlite.org",
+    "category": "Databases",
+    "status": 200
+  },
+  {
+    "url": "https://rust-lang.org/",
+    "canonical_url": "https://rust-lang.org/",
+    "title": "Rust Programming Language",
+    "snippet": "Rust empowering everyone to build reliable and efficient software with memory safety.",
+    "domain": "rust-lang.org",
+    "category": "Systems",
+    "status": 200
+  },
+  {
+    "url": "https://rust-lang.org/learn/",
+    "canonical_url": "https://rust-lang.org/learn/",
+    "title": "Learn Rust",
+    "snippet": "Getting started guides, Rust by Example, and interactive tutorials.",
+    "domain": "rust-lang.org",
+    "category": "Systems",
+    "status": 200
+  },
+  {
+    "url": "https://doc.rust-lang.org/book/",
+    "canonical_url": "https://doc.rust-lang.org/book/",
+    "title": "The Rust Programming Language - The Rust Book",
+    "snippet": "The definitive book on Rust ownership, borrowing, lifetimes, traits, and concurrency.",
+    "domain": "doc.rust-lang.org",
+    "category": "Systems",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "canonical_url": "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "title": "Rust (programming language) - Wikipedia",
+    "snippet": "Rust general-purpose programming language emphasizing performance, type safety, and concurrency.",
+    "domain": "en.wikipedia.org",
+    "category": "Systems",
+    "status": 200
+  },
+  {
+    "url": "https://www.kernel.org/",
+    "canonical_url": "https://www.kernel.org/",
+    "title": "The Linux Kernel Archives",
+    "snippet": "Official distribution point for the Linux operating system kernel sources and patches.",
+    "domain": "kernel.org",
+    "category": "Operating Systems",
+    "status": 200
+  },
+  {
+    "url": "https://docs.kernel.org/",
+    "canonical_url": "https://docs.kernel.org/",
+    "title": "The Linux Kernel Documentation",
+    "snippet": "Comprehensive documentation for kernel subsystems, drivers, memory management, and syscalls.",
+    "domain": "kernel.org",
+    "category": "Operating Systems",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Linux_kernel",
+    "canonical_url": "https://en.wikipedia.org/wiki/Linux_kernel",
+    "title": "Linux kernel - Wikipedia",
+    "snippet": "Linux kernel monolithic Unix-like operating system kernel created by Linus Torvalds.",
+    "domain": "en.wikipedia.org",
+    "category": "Operating Systems",
+    "status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTML",
+    "canonical_url": "https://developer.mozilla.org/en-US/docs/Web/HTML",
+    "title": "HTML: HyperText Markup Language | MDN",
+    "snippet": "MDN reference for HTML elements, attributes, semantic structuring, and accessibility.",
+    "domain": "developer.mozilla.org",
+    "category": "Web Standards",
+    "status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/CSS",
+    "canonical_url": "https://developer.mozilla.org/en-US/docs/Web/CSS",
+    "title": "CSS: Cascading Style Sheets | MDN",
+    "snippet": "MDN documentation for modern CSS styling, flexbox, grid, animations, and typography.",
+    "domain": "developer.mozilla.org",
+    "category": "Web Standards",
+    "status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+    "canonical_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+    "title": "JavaScript | MDN",
+    "snippet": "MDN documentation for modern JavaScript ECMAScript syntax, promises, and browser APIs.",
+    "domain": "developer.mozilla.org",
+    "category": "Web Standards",
+    "status": 200
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    "canonical_url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    "title": "HTTP | MDN",
+    "snippet": "MDN reference for HTTP protocol, request headers, status codes, caching, and CORS.",
+    "domain": "developer.mozilla.org",
+    "category": "Web Standards",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Information_retrieval",
+    "canonical_url": "https://en.wikipedia.org/wiki/Information_retrieval",
+    "title": "Information retrieval - Wikipedia",
+    "snippet": "Information retrieval activity of obtaining information resources relevant to an information need.",
+    "domain": "en.wikipedia.org",
+    "category": "Search Engines",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Search_engine_indexing",
+    "canonical_url": "https://en.wikipedia.org/wiki/Search_engine_indexing",
+    "title": "Search engine indexing - Wikipedia",
+    "snippet": "Search engine indexing collecting, parsing, and storing data to facilitate fast and accurate search.",
+    "domain": "en.wikipedia.org",
+    "category": "Search Engines",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Okapi_BM25",
+    "canonical_url": "https://en.wikipedia.org/wiki/Okapi_BM25",
+    "title": "Okapi BM25 - Wikipedia",
+    "snippet": "Okapi BM25 ranking function used by search engines to estimate the relevance of documents to a search query.",
+    "domain": "en.wikipedia.org",
+    "category": "Search Engines",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/PageRank",
+    "canonical_url": "https://en.wikipedia.org/wiki/PageRank",
+    "title": "PageRank - Wikipedia",
+    "snippet": "PageRank algorithm used by Google Search to rank web pages in their search engine results.",
+    "domain": "en.wikipedia.org",
+    "category": "Search Engines",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/James_Webb_Space_Telescope",
+    "canonical_url": "https://en.wikipedia.org/wiki/James_Webb_Space_Telescope",
+    "title": "James Webb Space Telescope - Wikipedia",
+    "snippet": "JWST space telescope designed to conduct infrared astronomy and peer into early cosmic epochs.",
+    "domain": "en.wikipedia.org",
+    "category": "Astronomy & Space",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/General_relativity",
+    "canonical_url": "https://en.wikipedia.org/wiki/General_relativity",
+    "title": "General relativity - Wikipedia",
+    "snippet": "General relativity geometric theory of gravitation published by Albert Einstein in 1915.",
+    "domain": "en.wikipedia.org",
+    "category": "Physics",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/CRISPR",
+    "canonical_url": "https://en.wikipedia.org/wiki/CRISPR",
+    "title": "CRISPR - Wikipedia",
+    "snippet": "CRISPR family of DNA sequences and CRISPR-Cas9 genome editing molecular tool.",
+    "domain": "en.wikipedia.org",
+    "category": "Biomedicine",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Macroeconomics",
+    "canonical_url": "https://en.wikipedia.org/wiki/Macroeconomics",
+    "title": "Macroeconomics - Wikipedia",
+    "snippet": "Macroeconomics branch of economics dealing with the performance, structure, behavior, and decision-making of an economy.",
+    "domain": "en.wikipedia.org",
+    "category": "Economics",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Renaissance",
+    "canonical_url": "https://en.wikipedia.org/wiki/Renaissance",
+    "title": "Renaissance - Wikipedia",
+    "snippet": "Renaissance period in history marking the transition from the Middle Ages to modernity.",
+    "domain": "en.wikipedia.org",
+    "category": "History & Philosophy",
+    "status": 200
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Silk_Road",
+    "canonical_url": "https://en.wikipedia.org/wiki/Silk_Road",
+    "title": "Silk Road - Wikipedia",
+    "snippet": "Silk Road historical network of Eurasian trade routes active from the Han dynasty to the Ottoman Empire.",
+    "domain": "en.wikipedia.org",
+    "category": "History & Philosophy",
+    "status": 200
+  }
+]

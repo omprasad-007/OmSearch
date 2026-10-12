@@ -539,6 +539,16 @@ class OpenSearchRepository:
             },
         }
 
+    def get_crawled_pages(
+        self,
+        page: int = 1,
+        size: int = 20,
+        domain: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Fetch crawled pages directly from SQLite FTS5 engine."""
+        return self._fts_repo.get_crawled_pages(page=page, size=size, domain=domain, query=query)
+
 
 # Singleton instance
 _repo_instance: Optional[OpenSearchRepository] = None

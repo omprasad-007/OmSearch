@@ -45,3 +45,23 @@ export interface SearchStats {
   cloud_archived_count?: number;
   cloud_storage_formatted?: string;
 }
+
+export interface CrawledPageItem {
+  id: string;
+  url: string;
+  domain: string;
+  title: string;
+  snippet: string;
+  indexed_at: string;
+  pagerank?: number;
+}
+
+export interface CrawledPagesResponse {
+  total: number;
+  page: number;
+  size: number;
+  total_pages: number;
+  items: CrawledPageItem[];
+  top_domains: { domain: string; count: number }[];
+}
+

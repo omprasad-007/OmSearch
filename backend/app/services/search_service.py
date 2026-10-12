@@ -280,4 +280,18 @@ class SearchService:
             domains_count=st.get("domains_count", 0),
             top_domains=st.get("top_domains", []),
             storage_bytes=st.get("storage_bytes"),
+            live_crawled_count=st.get("live_crawled_count", 0),
+            cloud_archived_count=st.get("cloud_archived_count", 0),
+            cloud_storage_formatted=st.get("cloud_storage_formatted", "0 MB"),
         )
+
+    def get_crawled_pages(
+        self,
+        page: int = 1,
+        size: int = 20,
+        domain: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Retrieve paginated live crawled web pages."""
+        return self.repo.get_crawled_pages(page=page, size=size, domain=domain, query=query)
+

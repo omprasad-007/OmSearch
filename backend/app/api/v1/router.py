@@ -103,3 +103,30 @@ def search_stats():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve search index statistics.",
         )
+
+
+@router.get(
+    "/crawled-pages",
+    summary="List Crawled Web Pages",
+    description="Returns paginated real-world crawled web pages with domain filtering and search support.",
+)
+@router.get(
+    "/search/crawled",
+    summary="List Crawled Web Pages (Alias)",
+    description="Alias endpoint for retrieving real-world crawled web pages.",
+)
+def get_crawled_pages(
+    page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
+    size: int = Query(default=20, ge=1, le=100, description="Results per page"),
+    domain: Optional[str] = Query(default=None, description="Optional domain filter (e.g. github.com)"),
+    q: Optional[str] = Query(default=None, description="Optional keyword search"),
+):
+    try:
+        return search_service.get_crawled_pages(page=page, size=size, domain=domain, query=q)
+    except Exception as e:
+        logger.exception("Error fetching crawled pages: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unable to retrieve crawled pages: {str(e)}",
+        )
+

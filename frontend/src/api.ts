@@ -1,4 +1,4 @@
-import type { SearchResponse, SuggestionsResponse, SearchStats } from './types';
+import type { SearchResponse, SuggestionsResponse, SearchStats, CrawledPagesResponse } from './types';
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
@@ -47,3 +47,24 @@ export async function fetchStats(): Promise<SearchStats | null> {
     return null;
   }
 }
+
+export async function fetchCrawledPages(
+  page: number = 1,
+  size: number = 20,
+  domain?: string,
+  query?: string
+): Promise<CrawledPagesResponse> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+  if (domain) params.append('domain', domain);
+  if (query) params.append('q', query);
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/crawled-pages?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to load crawled pages: ${response.status}`);
+  }
+  return response.json();
+}
+

@@ -11,6 +11,7 @@ import logging
 import threading
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+import math
 from datetime import datetime, timezone
 
 from app.core.config import get_settings
@@ -447,6 +448,7 @@ class SQLiteFTSRepository:
             import json
             from pathlib import Path
             status_candidates = [
+                Path(__file__).resolve().parent.parent / "ingestion" / "drive_ingestion_live_status.json",
                 Path(__file__).resolve().parents[2] / "data" / "drive_ingestion_live_status.json",
                 Path("data/drive_ingestion_live_status.json"),
                 Path("../data/drive_ingestion_live_status.json"),
@@ -472,6 +474,51 @@ class SQLiteFTSRepository:
             "index_alias": "om_documents",
             "status": "online_fts5",
             "domains_count": domains_count,
+            "top_domains": top_domains,
+        }
+
+    def get_crawled_pages(
+        self,
+        page: int = 1,
+        size: int = 20,
+        domain: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Fetch real crawled web pages from SQLite index with pagination and domain filter."""
+        conn = self._get_connection()
+        where_clauses = ["document_type = 'live_web_page'"]
+        params = []
+        if domain:
+            where_clauses.append("domain = ?")
+            params.append(domain.strip().lower())
+        if query:
+            where_clauses.append("(title LIKE ? OR snippet LIKE ? OR url LIKE ?)")
+            clean_q = f"%{query.strip()}%"
+            params.extend([clean_q, clean_q, clean_q])
+
+        where_sql = " AND ".join(where_clauses)
+        cur = conn.execute(f"SELECT COUNT(*) FROM documents WHERE {where_sql}", params)
+        total = cur.fetchone()[0]
+
+        offset = max(0, (page - 1) * size)
+        cur = conn.execute(
+            f"SELECT id, url, domain, title, snippet, indexed_at, pagerank FROM documents WHERE {where_sql} ORDER BY pagerank DESC, rowid DESC LIMIT ? OFFSET ?",
+            params + [size, offset],
+        )
+        items = [dict(r) for r in cur.fetchall()]
+
+        # Top crawled domains breakdown
+        cur = conn.execute(
+            "SELECT domain, COUNT(*) as cnt FROM documents WHERE document_type = 'live_web_page' GROUP BY domain ORDER BY cnt DESC LIMIT 20;"
+        )
+        top_domains = [{"domain": r["domain"], "count": r["cnt"]} for r in cur.fetchall()]
+
+        return {
+            "total": total,
+            "page": page,
+            "size": size,
+            "total_pages": math.ceil(total / size) if total > 0 else 0,
+            "items": items,
             "top_domains": top_domains,
         }
 

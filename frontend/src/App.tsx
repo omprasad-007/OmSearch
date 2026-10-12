@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrandEmblem } from './components/BrandEmblem';
 import { IngestionDashboardModal } from './components/IngestionDashboardModal';
+import { CrawledPagesModal } from './components/CrawledPagesModal';
 import { fetchSearch, fetchSuggestions, fetchStats } from './api';
 import type { SearchResponse, SearchStats, SearchResultItem } from './types';
 
@@ -28,7 +29,7 @@ export const App: React.FC = () => {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   
   // Modals state
-  const [activeModal, setActiveModal] = useState<'about' | 'how-works' | 'settings' | 'ingestion' | null>(null);
+  const [activeModal, setActiveModal] = useState<'about' | 'how-works' | 'settings' | 'ingestion' | 'crawled' | null>(null);
   
   // Explanations drawer state
   const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
@@ -172,6 +173,17 @@ export const App: React.FC = () => {
   // Filter results by scope tab
   const getFilteredResults = (results: SearchResultItem[]) => {
     if (resultScope === 'all') return results;
+    if (resultScope === 'crawled') {
+      return results.filter(
+        (r) =>
+          r.document_type === 'live_web_page' ||
+          r.url.includes('github.com') ||
+          r.url.includes('linkedin.com') ||
+          r.url.includes('man.he.net') ||
+          r.url.includes('x.com') ||
+          r.url.includes('python.org')
+      );
+    }
     if (resultScope === 'docs') {
       return results.filter(
         (r) =>
@@ -209,17 +221,25 @@ export const App: React.FC = () => {
             </span>
           </button>
 
-          <div className="flex items-center gap-6">
-            <nav className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <nav className="flex items-center gap-4 sm:gap-6">
+              <button
+                onClick={() => setActiveModal('crawled')}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium bg-[#37654d]/10 text-[#37654d] hover:bg-[#37654d]/20 transition-colors border-none cursor-pointer"
+                title="Browse 13,578 live crawled web pages"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#37654d] animate-pulse" />
+                <span>Crawled Pages ({stats?.live_crawled_count ? stats.live_crawled_count.toLocaleString() : '13.5k'})</span>
+              </button>
               <button
                 onClick={() => setActiveModal('about')}
-                className="text-[14px] text-[#57423b] hover:text-[#1b1c1a] transition-colors bg-transparent border-none cursor-pointer"
+                className="text-[14px] text-[#57423b] hover:text-[#1b1c1a] transition-colors bg-transparent border-none cursor-pointer hidden sm:inline-block"
               >
                 About
               </button>
               <button
                 onClick={() => setActiveModal('how-works')}
-                className="text-[14px] text-[#57423b] hover:text-[#1b1c1a] transition-colors bg-transparent border-none cursor-pointer"
+                className="text-[14px] text-[#57423b] hover:text-[#1b1c1a] transition-colors bg-transparent border-none cursor-pointer hidden sm:inline-block"
               >
                 How search works
               </button>
@@ -453,30 +473,45 @@ export const App: React.FC = () => {
                 {/* Live Index Activity Strip */}
                 <div className="mt-7 flex items-center justify-center">
                   <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-3.5 py-1.5 rounded-full bg-[#f5f3f0]/90 border border-[#e4e2dd] text-[13px] text-[#5e5f5b] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                    <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('about')}
+                      className="flex items-center gap-2 shrink-0 bg-transparent border-none cursor-pointer p-0 group"
+                      title="View Index Architecture"
+                    >
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#37654d] opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#37654d]" />
                       </span>
-                      <span className="font-medium text-[#57423b]">Searchable Index:</span>
-                      <span className="font-mono text-[12px] text-[#1b1c1a] font-semibold">
-                        {stats ? `${stats.total_documents.toLocaleString()} pages` : '17,000+ verified pages'}
+                      <span className="font-medium text-[#57423b] group-hover:text-[#1b1c1a]">Searchable Index:</span>
+                      <span className="font-mono text-[12px] text-[#1b1c1a] font-semibold underline decoration-dotted group-hover:decoration-solid">
+                        {stats ? `${stats.total_documents.toLocaleString()} pages` : '17,114 verified pages'}
                       </span>
-                    </div>
+                    </button>
                     <span className="text-[#c7c6c2] hidden sm:inline select-none">·</span>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="font-medium text-[#57423b]">Live Crawled:</span>
-                      <span className="font-mono text-[12px] text-[#37654d] font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('crawled')}
+                      className="flex items-center gap-1.5 shrink-0 bg-transparent border-none cursor-pointer p-0 group"
+                      title="Click to browse all live crawled web pages"
+                    >
+                      <span className="font-medium text-[#57423b] group-hover:text-[#37654d]">Live Crawled:</span>
+                      <span className="font-mono text-[12px] text-[#37654d] font-semibold underline decoration-dotted group-hover:decoration-solid">
                         {stats?.live_crawled_count ? `${stats.live_crawled_count.toLocaleString()} web pages` : '13,578 real pages'}
                       </span>
-                    </div>
+                    </button>
                     <span className="text-[#c7c6c2] hidden sm:inline select-none">·</span>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="font-medium text-[#57423b]">Drive 5 TB Archive:</span>
-                      <span className="font-mono text-[12px] text-[#a03b14] font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('ingestion')}
+                      className="flex items-center gap-1.5 shrink-0 bg-transparent border-none cursor-pointer p-0 group"
+                      title="Click to view Google One 5 TB cold archive status"
+                    >
+                      <span className="font-medium text-[#57423b] group-hover:text-[#a03b14]">Drive 5 TB Archive:</span>
+                      <span className="font-mono text-[12px] text-[#a03b14] font-semibold underline decoration-dotted group-hover:decoration-solid">
                         {stats?.cloud_archived_count ? `${(stats.cloud_archived_count / 1000000).toFixed(2)}M pages` : '4.18M pages'}
                       </span>
-                    </div>
+                    </button>
                     <span className="text-[#c7c6c2] hidden sm:inline select-none">·</span>
                     <div className="flex items-center gap-1 shrink-0 text-[#57423b] italic">
                       <span className="material-symbols-outlined text-[15px] text-[#37654d] not-italic">
@@ -485,6 +520,28 @@ export const App: React.FC = () => {
                       <span>Zero tracked queries</span>
                     </div>
                   </div>
+                </div>
+
+                {/* Explore 13.5k Live Crawled Real-Web Pages CTA */}
+                <div className="mt-4 flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal('crawled')}
+                    className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white border border-[#e4e2dd] hover:border-[#37654d] shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_16px_rgba(55,101,77,0.1)] transition-all cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[18px] text-[#37654d] group-hover:scale-110 transition-transform">
+                      travel_explore
+                    </span>
+                    <span className="text-[13px] font-semibold text-[#1b1c1a] group-hover:text-[#37654d] transition-colors">
+                      Browse {stats?.live_crawled_count ? stats.live_crawled_count.toLocaleString() : '13,578'} Live Crawled Web Pages
+                    </span>
+                    <span className="text-[12px] text-[#5e5f5b] hidden sm:inline">
+                      across {stats ? stats.domains_count.toLocaleString() : '1,061'}+ domains
+                    </span>
+                    <span className="material-symbols-outlined text-[16px] text-[#5e5f5b] group-hover:translate-x-0.5 transition-transform">
+                      arrow_forward
+                    </span>
+                  </button>
                 </div>
 
                 {/* Transparent Index Status */}
@@ -559,9 +616,10 @@ export const App: React.FC = () => {
                 </div>
 
                 {/* Scope tabs in result mode */}
-                <div className="flex items-center gap-6 mt-4 pt-1">
+                <div className="flex items-center gap-6 mt-4 pt-1 overflow-x-auto">
                   {[
                     { id: 'all', label: 'All Sources' },
+                    { id: 'crawled', label: `Live Crawled Web (${stats?.live_crawled_count ? stats.live_crawled_count.toLocaleString() : '13.5k'})` },
                     { id: 'academic', label: 'Knowledge & Science' },
                     { id: 'docs', label: 'Technical Documentation' },
                   ].map((tab) => (
@@ -569,7 +627,7 @@ export const App: React.FC = () => {
                       key={tab.id}
                       type="button"
                       onClick={() => setResultScope(tab.id)}
-                      className={`text-[14px] pb-2 transition-colors border-b-2 cursor-pointer bg-transparent border-none ${
+                      className={`text-[14px] pb-2 transition-colors border-b-2 cursor-pointer bg-transparent border-none shrink-0 ${
                         resultScope === tab.id
                           ? 'text-[#1b1c1a] font-semibold border-b-[#a03b14] !border-solid'
                           : 'text-[#5e5f5b] hover:text-[#1b1c1a] border-b-transparent'
@@ -621,11 +679,18 @@ export const App: React.FC = () => {
                             <span className="text-[13px] text-[#5e5f5b] truncate max-w-[380px]">
                               {item.canonical_url || item.url}
                             </span>
-                            <span className="text-[11px] text-[#37654d] font-semibold px-1.5 py-0.5 rounded bg-[#a0d2b4]/30">
-                              {item.document_type === 'documentation'
-                                ? 'Documentation'
-                                : 'Primary Record'}
-                            </span>
+                            {item.document_type === 'live_web_page' ? (
+                              <span className="text-[11px] text-[#37654d] font-semibold px-2 py-0.5 rounded bg-[#37654d]/15 flex items-center gap-1 shrink-0">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#37654d]" />
+                                Live Crawled
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-[#57423b] font-semibold px-1.5 py-0.5 rounded bg-[#a0d2b4]/30 shrink-0">
+                                {item.document_type === 'documentation'
+                                  ? 'Documentation'
+                                  : 'Primary Record'}
+                              </span>
+                            )}
                           </div>
 
                           {/* Title */}
@@ -980,6 +1045,18 @@ export const App: React.FC = () => {
       {/* Modal Dialog: Unified Ingestion Dashboard (Phase 4) */}
       {activeModal === 'ingestion' && (
         <IngestionDashboardModal onClose={() => setActiveModal(null)} />
+      )}
+
+      {/* Modal Dialog: Live Crawled Web Index Explorer */}
+      {activeModal === 'crawled' && (
+        <CrawledPagesModal
+          isOpen={true}
+          onClose={() => setActiveModal(null)}
+          onSelectQuery={(q) => {
+            setQuery(q);
+            executeSearch(q);
+          }}
+        />
       )}
 
     </div>

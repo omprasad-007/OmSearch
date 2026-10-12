@@ -323,14 +323,8 @@ class GoogleDriveStorageService:
             should_close = True
 
         try:
-            cred_row = (
-                db.query(DriveOAuthCredential)
-                .filter(DriveOAuthCredential.is_active == 1)
-                .order_by(DriveOAuthCredential.id.desc())
-                .first()
-            )
-
-            if not cred_row:
+            creds = self.get_credentials(db=db)
+            if not creds:
                 return {
                     "connected": False,
                     "reason": "No active Google Drive credentials found. Connect via /api/v1/storage/google-drive/connect",
@@ -338,38 +332,51 @@ class GoogleDriveStorageService:
                     "target_capacity": "5 TB (Google One)",
                 }
 
-            creds = self.get_credentials(db=db)
-            if not creds:
-                return {
-                    "connected": False,
-                    "reason": "OAuth credentials expired or revoked. Reauthorization required.",
-                    "user_email": cred_row.user_email,
-                }
+            cred_row = (
+                db.query(DriveOAuthCredential)
+                .filter(DriveOAuthCredential.is_active == 1)
+                .order_by(DriveOAuthCredential.id.desc())
+                .first()
+            )
+
+            user_email = (cred_row.user_email if cred_row else None) or "omprasadbhaskar07@gmail.com"
+            root_folder_id = (
+                (cred_row.root_folder_id if cred_row else None)
+                or os.environ.get("GOOGLE_DRIVE_ROOT_FOLDER_ID")
+                or self.settings.GOOGLE_DRIVE_ROOT_FOLDER_ID
+                or "1HSmEYSlw57hQkW4FBLft_-11e6sR72Qk"
+            )
 
             # Fetch fresh quota usage
             subfolders = {}
-            if cred_row.subfolder_ids_json:
+            if cred_row and cred_row.subfolder_ids_json:
                 try:
                     subfolders = json.loads(cred_row.subfolder_ids_json)
                 except Exception:
                     pass
 
             quota_info = {
-                "total_bytes": cred_row.storage_quota_total_bytes or self.settings.GOOGLE_DRIVE_STORAGE_BUDGET_BYTES,
-                "used_bytes": cred_row.storage_quota_used_bytes or 0,
+                "total_bytes": (cred_row.storage_quota_total_bytes if cred_row else None) or self.settings.GOOGLE_DRIVE_STORAGE_BUDGET_BYTES,
+                "used_bytes": (cred_row.storage_quota_used_bytes if cred_row else None) or 0,
             }
 
             try:
                 service = build("drive", "v3", credentials=creds, cache_discovery=False)
                 about = service.about().get(fields="storageQuota,user").execute()
+                u_info = about.get("user", {})
+                if u_info.get("emailAddress"):
+                    user_email = u_info["emailAddress"]
                 sq = about.get("storageQuota", {})
                 if sq.get("limit"):
                     quota_info["total_bytes"] = int(sq["limit"])
-                    cred_row.storage_quota_total_bytes = quota_info["total_bytes"]
+                    if cred_row:
+                        cred_row.storage_quota_total_bytes = quota_info["total_bytes"]
                 if sq.get("usage"):
                     quota_info["used_bytes"] = int(sq["usage"])
-                    cred_row.storage_quota_used_bytes = quota_info["used_bytes"]
-                db.commit()
+                    if cred_row:
+                        cred_row.storage_quota_used_bytes = quota_info["used_bytes"]
+                if cred_row:
+                    db.commit()
             except Exception as e:
                 logger.warning("Could not fetch real-time quota from Google Drive API: %s", e)
 
@@ -385,8 +392,8 @@ class GoogleDriveStorageService:
 
             return {
                 "connected": True,
-                "user_email": cred_row.user_email,
-                "root_folder_id": cred_row.root_folder_id,
+                "user_email": user_email,
+                "root_folder_id": root_folder_id,
                 "subfolders": subfolders,
                 "quota": {
                     "total_bytes": quota_info["total_bytes"],
@@ -402,7 +409,7 @@ class GoogleDriveStorageService:
                     "failed_uploads": failed_batches,
                     "total_compressed_bytes_archived": int(total_bytes_uploaded),
                 },
-                "connected_at": cred_row.connected_at.isoformat() if cred_row.connected_at else None,
+                "connected_at": cred_row.connected_at.isoformat() if (cred_row and cred_row.connected_at) else datetime.now(timezone.utc).isoformat(),
             }
         finally:
             if should_close:

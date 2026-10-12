@@ -1,0 +1,36 @@
+name: Cloud Continuous Google Drive Indexer
+
+on:
+  schedule:
+    # Runs automatically every 4 hours in the cloud (even when laptop is off)
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    # Allows manual trigger anytime from GitHub Actions tab
+
+jobs:
+  cloud-ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Ingestion Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install httpx google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2 cryptography sqlalchemy pydantic pydantic-settings
+
+      - name: Run Cloud Archiving to Google Drive (Zero Disk Footprint)
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          OPERATOR_API_KEY: ${{ secrets.OPERATOR_API_KEY }}
+        run: |
+          python scripts/run_continuous_drive_ingestion.py --batch-size 5000 --max-batches 20 --crawl-threads 8

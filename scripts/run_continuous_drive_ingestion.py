@@ -49,13 +49,20 @@ from crawler.om_crawler.common_crawl_streamer import MULTI_DOMAIN_TAXONOMY
 from crawler.om_crawler.url_normalizer import URLNormalizer
 from crawler.om_crawler.extractor import HTMLExtractor
 
+# Ensure data directory exists before configuring loggers
+_data_dir = _project_root / "data"
+_data_dir.mkdir(parents=True, exist_ok=True)
+
+log_handlers = [logging.StreamHandler(sys.stdout)]
+try:
+    log_handlers.append(logging.FileHandler(str(_data_dir / "drive_continuous_ingestion.log"), encoding="utf-8"))
+except Exception:
+    pass
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler(str(_project_root / "data" / "drive_continuous_ingestion.log"), encoding="utf-8")
-    ]
+    handlers=log_handlers
 )
 logger = logging.getLogger("om_drive_ingestion")
 

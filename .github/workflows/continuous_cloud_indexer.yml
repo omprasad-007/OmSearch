@@ -36,4 +36,5 @@ jobs:
           GOOGLE_DRIVE_ROOT_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_ROOT_FOLDER_ID }}
           OPERATOR_API_KEY: ${{ secrets.OPERATOR_API_KEY }}
         run: |
+          mkdir -p data data/temp_drive_spool
           python scripts/run_continuous_drive_ingestion.py --batch-size 5000 --max-batches 20 --crawl-threads 8

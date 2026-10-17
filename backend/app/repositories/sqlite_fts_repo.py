@@ -459,8 +459,7 @@ class SQLiteFTSRepository:
                         s_data = json.load(f)
                         cloud_archived_count = s_data.get("total_documents_archived", 0)
                         cloud_storage_formatted = s_data.get("formatted_cloud_storage", "0 MB")
-                        if not live_crawled_count:
-                            live_crawled_count = s_data.get("live_crawled_pages_count", 0)
+                        live_crawled_count = max(live_crawled_count, s_data.get("live_crawled_pages_count", 0))
                     break
         except Exception:
             pass
@@ -482,7 +481,7 @@ class SQLiteFTSRepository:
             pass
 
         return {
-            "total_documents": total_docs,
+            "total_documents": max(total_docs, cloud_archived_count) if cloud_archived_count else total_docs,
             "live_crawled_count": live_crawled_count,
             "cloud_archived_count": cloud_archived_count,
             "cloud_storage_formatted": cloud_storage_formatted,
@@ -528,6 +527,29 @@ class SQLiteFTSRepository:
             "SELECT domain, COUNT(*) as cnt FROM documents WHERE document_type = 'live_web_page' GROUP BY domain ORDER BY cnt DESC LIMIT 20;"
         )
         top_domains = [{"domain": r["domain"], "count": r["cnt"]} for r in cur.fetchall()]
+
+        if not items:
+            try:
+                import json
+                from pathlib import Path
+                json_candidates = [
+                    Path(__file__).resolve().parents[2] / "data" / "crawled_batch_live.json",
+                    Path("data/crawled_batch_live.json"),
+                ]
+                for j_path in json_candidates:
+                    if j_path.exists():
+                        with open(j_path, "r", encoding="utf-8") as f:
+                            raw_pages = json.load(f)
+                            if domain:
+                                raw_pages = [p for p in raw_pages if p.get("domain") == domain]
+                            if query:
+                                q_lower = query.lower()
+                                raw_pages = [p for p in raw_pages if q_lower in f"{p.get('title','')} {p.get('snippet','')} {p.get('url','')}".lower()]
+                            total = len(raw_pages)
+                            items = raw_pages[offset : offset + size]
+                            break
+            except Exception:
+                pass
 
         return {
             "total": total,

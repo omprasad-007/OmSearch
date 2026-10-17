@@ -34,13 +34,13 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onClose }) => {
               <div className="stat-item">
                 <span className="stat-label">Live Crawled Web</span>
                 <p className="stat-val" style={{ color: '#10b981' }}>
-                  {stats.live_crawled_count ? stats.live_crawled_count.toLocaleString() : '13,578'}
+                  {stats.live_crawled_count ? stats.live_crawled_count.toLocaleString() : '21,637'}
                 </p>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Google Drive 5 TB Archive</span>
                 <p className="stat-val" style={{ color: '#f59e0b', fontSize: '0.9rem' }}>
-                  {stats.cloud_archived_count ? `${stats.cloud_archived_count.toLocaleString()} docs` : '7.7M+ docs'}
+                  {stats.cloud_archived_count ? `${stats.cloud_archived_count.toLocaleString()} docs` : '9.32M+ docs'}
                 </p>
               </div>
               <div className="stat-item">

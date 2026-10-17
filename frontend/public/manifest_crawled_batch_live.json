@@ -1,0 +1,40 @@
+{
+  "batch_id": "batch_live_crawl_20261017_3312",
+  "crawled_urls": [
+    "https://donate.wikimedia.org/w/index.php?amp%3Buselang=en&amp;amp%3Bwmf_campaign=meta.wikimedia.org&amp;amp%3Bwmf_medium=sidebar&amp;country=XX&amp;title=Special:LandingPage&amp;wmf_campaign=spontaneous&amp;wmf_medium=spontaneous&amp;wmf_source=donate",
+    "https://www.wikidata.org/wiki/Special:EntityPage/Q124302243",
+    "https://donate.wikimedia.org/w/index.php?amp%3Bamp%3Bwmf_campaign=spontaneous&amp;amp%3Bamp%3Bwmf_medium=spontaneous&amp;amp%3Bamp%3Bwmf_source=fr-redir&amp;amp%3Bcountry=XX&amp;amp%3Btitle=Special%3ALandingPage&amp;amp%3Bwmf_campaign=spontaneous&amp;amp%3Bwmf_medium=spontaneous&amp;amp%3Bwmf_source=fr-redir&amp;country=XX&amp;title=Special:LandingPage&amp;wmf_campaign=spontaneous&amp;wmf_medium=spontaneous&amp;wmf_source=fr-redir",
+    "https://www.w3.org/community/webassembly/2024/08/09/welcome-to-the-webassembly-cg-check-out-our-github/",
+    "https://donate.wikimedia.org/w/index.php?amp%3Bamp%3Bamp%3Bwmf_medium=sidebar&amp;amp%3Bamp%3Bcountry=XX&amp;amp%3Bamp%3Btitle=Special%3ALandingPage&amp;amp%3Bamp%3Buselang=ar&amp;amp%3Bamp%3Bwmf_campaign=spontaneous&amp;amp%3Bamp%3Bwmf_medium=spontaneous&amp;amp%3Bamp%3Bwmf_source=donate&amp;amp%3Bcountry=XX&amp;amp%3Btitle=Special%3ALandingPage&amp;amp%3Bwmf_campaign=spontaneous&amp;amp%3Bwmf_medium=spontaneous&amp;amp%3Bwmf_source=fr-redir&amp;country=XX&amp;title=Special:LandingPage&amp;wmf_campaign=spontaneous&amp;wmf_medium=spontaneous&amp;wmf_source=fr-redir",
+    "https://phabricator.wikimedia.org/tag/campaignevents/",
+    "https://donate.wikimedia.org/w/index.php?amp%3Bamp%3Bamp%3Bwmf_medium=sidebar&amp;amp%3Bamp%3Bcountry=XX&amp;amp%3Bamp%3Btitle=Special%3ALandingPage&amp;amp%3Bamp%3Buselang=ary&amp;amp%3Bamp%3Bwmf_campaign=spontaneous&amp;amp%3Bamp%3Bwmf_medium=spontaneous&amp;amp%3Bamp%3Bwmf_source=donate&amp;amp%3Bcountry=XX&amp;amp%3Btitle=Special%3ALandingPage&amp;amp%3Bwmf_campaign=spontaneous&amp;amp%3Bwmf_medium=spontaneous&amp;amp%3Bwmf_source=fr-redir&amp;country=XX&amp;title=Special:LandingPage&amp;wmf_campaign=spontaneous&amp;wmf_medium=spontaneous&amp;wmf_source=fr-redir",
+    "https://github.com/WebAssembly/",
+    "https://github.com/WebAssembly/spec",
+    "https://github.com/WebAssembly/design",
+    "https://github.com/WebAssembly/meetings",
+    "https://github.com/WebAssembly/meetings/tree/main/process",
+    "https://github.com/WebAssembly/meetings/blob/main/CODE_OF_CONDUCT.md",
+    "https://en.wikipedia.org/w/rest.php/discord/v0-internal/discord-preview?title=ANSI+escape+code&amp;db=enwiki&amp;lang=en",
+    "https://sqlite.org/src/info/e6b9a40732",
+    "https://cs.wikipedia.org/wiki/ANSI_escape_k%C3%B3d",
+    "https://ca.wikipedia.org/wiki/Codi_ESC_ANSI",
+    "https://ar.wikipedia.org/wiki/%D8%AA%D8%B3%D9%84%D8%B3%D9%84%D8%A7%D8%AA_%D9%87%D8%B1%D9%88%D8%A8_%D8%A3%D9%86%D8%B3%D9%8A",
+    "https://ja.wikipedia.org/wiki/Emscripten",
+    "https://sqlite.org/src/info/535a77cf5a8e1a7b",
+    "https://sqlite.org/src/info/85effd2ad321fb7f"
+  ],
+  "record_count": 21,
+  "domains": [
+    "donate.wikimedia.org",
+    "www.wikidata.org",
+    "www.w3.org",
+    "phabricator.wikimedia.org",
+    "github.com",
+    "en.wikipedia.org",
+    "sqlite.org",
+    "cs.wikipedia.org",
+    "ca.wikipedia.org",
+    "ar.wikipedia.org",
+    "ja.wikipedia.org"
+  ]
+}

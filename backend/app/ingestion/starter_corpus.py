@@ -183,7 +183,7 @@ def load_and_index_crawled_urls() -> int:
 
 
 def index_live_crawled_pages_from_json() -> int:
-    """Index all rich live crawled web pages from crawled_pages.json into SQLite FTS5."""
+    """Index all rich live crawled web pages from crawled_pages.json and data/ batches into SQLite FTS5."""
     fts_repo = get_sqlite_fts_repo()
     candidates = [
         Path(__file__).resolve().parents[2] / "frontend" / "public" / "crawled_pages.json",
@@ -191,62 +191,55 @@ def index_live_crawled_pages_from_json() -> int:
         Path(__file__).resolve().parents[2] / "data" / "crawled_batch_live.json",
         Path("data/crawled_batch_live.json"),
     ]
-    json_file = None
-    for c in candidates:
-        if c.exists() and c.stat().st_size > 1000:
-            json_file = c
-            break
-
-    if not json_file:
-        return 0
-
-    try:
-        with open(json_file, "r", encoding="utf-8") as f:
-            items = json.load(f)
-    except Exception as e:
-        logger.warning("Could not read %s: %s", json_file, e)
-        return 0
-
-    if not items:
-        return 0
-
+    seen_urls: Set[str] = set()
+    total_indexed = 0
     docs = []
     now_iso = datetime.now(timezone.utc).isoformat()
-    for item in items:
-        url = item.get("url")
-        if not url:
-            continue
-        title = item.get("title") or url
-        snippet = item.get("snippet") or ""
-        content = item.get("content") or f"{title}\n\n{snippet}"
-        domain = item.get("domain") or urlparse(url).netloc.lower()
-        doc_id = item.get("id") or hashlib.sha256(url.encode()).hexdigest()[:16]
 
-        docs.append({
-            "id": doc_id,
-            "url": url,
-            "canonical_url": item.get("canonical_url", url),
-            "domain": domain,
-            "category": item.get("category", "Live Web Crawl"),
-            "title": title,
-            "snippet": snippet,
-            "content": content,
-            "language": item.get("language", "en"),
-            "document_type": "live_web_page",
-            "published_at": item.get("published_at", "2026-01-01T00:00:00Z"),
-            "indexed_at": item.get("indexed_at", now_iso),
-            "pagerank": float(item.get("pagerank", 0.85)),
-        })
+    for c in candidates:
+        if c.exists() and c.stat().st_size > 100:
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                for item in items:
+                    url = item.get("url")
+                    if not url or url in seen_urls:
+                        continue
+                    seen_urls.add(url)
+                    title = item.get("title") or url
+                    snippet = item.get("snippet") or ""
+                    content = item.get("content") or f"{title}\n\n{snippet}"
+                    domain = item.get("domain") or urlparse(url).netloc.lower()
+                    doc_id = item.get("id") or hashlib.sha256(url.encode()).hexdigest()[:16]
 
-        if len(docs) >= 500:
-            fts_repo.index_documents_bulk(docs)
-            docs = []
+                    docs.append({
+                        "id": doc_id,
+                        "url": url,
+                        "canonical_url": item.get("canonical_url", url),
+                        "domain": domain,
+                        "category": item.get("category", "Live Web Crawl"),
+                        "title": title,
+                        "snippet": snippet,
+                        "content": content,
+                        "language": item.get("language", "en"),
+                        "document_type": "live_web_page",
+                        "published_at": item.get("published_at", "2026-01-01T00:00:00Z"),
+                        "indexed_at": item.get("indexed_at", now_iso),
+                        "pagerank": float(item.get("pagerank", 0.85)),
+                    })
+                    if len(docs) >= 500:
+                        fts_repo.index_documents_bulk(docs)
+                        total_indexed += len(docs)
+                        docs = []
+            except Exception as e:
+                logger.debug("Notice reading %s: %s", c, e)
 
     if docs:
         fts_repo.index_documents_bulk(docs)
+        total_indexed += len(docs)
 
-    logger.info("Successfully indexed %d live crawled pages from %s into FTS5 index!", len(items), json_file.name)
-    return len(items)
+    logger.info("Successfully indexed %d live crawled pages into FTS5 index!", total_indexed)
+    return total_indexed
 
 
 def ensure_starter_index(min_docs: int = 10000) -> int:

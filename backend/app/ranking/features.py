@@ -18,6 +18,7 @@ class CandidateFeatures:
     title_coverage: float
     exact_title_match: float
     phrase_match: float
+    keyword_coverage: float
     authority: float
     freshness: float
     quality: float
@@ -30,6 +31,7 @@ class CandidateFeatures:
             "title_coverage": round(self.title_coverage, 3),
             "exact_title_match": round(self.exact_title_match, 3),
             "phrase_match": round(self.phrase_match, 3),
+            "keyword_coverage": round(self.keyword_coverage, 3),
             "authority": round(self.authority, 3),
             "freshness": round(self.freshness, 3),
             "quality": round(self.quality, 3),
@@ -84,6 +86,14 @@ class FeatureExtractor:
         elif len(query.tokens) > 1 and query.normalized_query in content.lower():
             phrase_match = 0.5
 
+        # 4b. Specific Keyword Coverage across entire document (title + snippet + content)
+        doc_full_text = f"{title} {candidate.get('snippet', '')} {content}".lower()
+        if query.tokens:
+            matched_kws = sum(1 for t in query.tokens if t in doc_full_text)
+            keyword_coverage = matched_kws / len(query.tokens)
+        else:
+            keyword_coverage = 1.0
+
         # 5. Link authority (PageRank)
         pr_map = authority_lookup or {}
         raw_pr = pr_map.get(url, 0.0)
@@ -116,6 +126,7 @@ class FeatureExtractor:
             title_coverage=title_coverage,
             exact_title_match=exact_title_match,
             phrase_match=phrase_match,
+            keyword_coverage=keyword_coverage,
             authority=authority,
             freshness=freshness,
             quality=quality,

@@ -55,6 +55,19 @@ class RerankingScorer:
         # Sum linear combination
         total_score = bm25_part + title_part + auth_part + fresh_part + qual_part
 
+        # 5b. Search Keyword Accuracy Boost (ensures exact keywords in search box rank top)
+        if features.keyword_coverage >= 1.0:
+            total_score += 0.35
+            explanations.append("Matches 100% of search keywords")
+        elif features.keyword_coverage >= 0.5:
+            total_score += 0.15 * features.keyword_coverage
+        else:
+            total_score *= 0.40
+            explanations.append("Penalized: missing search keywords")
+
+        if features.exact_title_match > 0:
+            total_score += 0.25
+
         # 6. Anti-spam penalty
         if features.spam_risk > 0.4:
             total_score *= self.config.spam_penalty_multiplier

@@ -28,13 +28,19 @@ class SQLiteFTSRepository:
         if db_path:
             self.db_path = Path(db_path)
         else:
+            backend_dir = Path(__file__).resolve().parents[2]
+            root_dir = Path(__file__).resolve().parents[3]
             candidates = [
-                Path(__file__).resolve().parents[2] / "om_search_fts.db",  # backend/om_search_fts.db
-                Path("om_search_fts.db"),
-                Path(__file__).resolve().parents[3] / "om_search_fts.db",  # root/om_search_fts.db
+                backend_dir / "om_search_local.db",
+                Path("backend/om_search_local.db"),
+                Path("om_search_local.db"),
+                root_dir / "backend" / "om_search_local.db",
+                root_dir / "om_search_local.db",
+                backend_dir / "om_search_fts.db",
                 Path("backend/om_search_fts.db"),
+                Path("om_search_fts.db"),
             ]
-            self.db_path = (Path(__file__).resolve().parents[2] / "om_search_fts.db").resolve()
+            self.db_path = (backend_dir / "om_search_local.db").resolve()
             for c in candidates:
                 if c.exists() and c.stat().st_size > 1000:
                     self.db_path = c.resolve()
@@ -72,13 +78,6 @@ class SQLiteFTSRepository:
     def _init_db(self):
         """Idempotently initialize documents table, FTS5 virtual table, and triggers."""
         conn = self._get_connection()
-        try:
-            cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='documents';")
-            if cur.fetchone():
-                return
-        except Exception:
-            pass
-
         with conn:
             conn.execute("""
             CREATE TABLE IF NOT EXISTS documents (
@@ -115,38 +114,69 @@ class SQLiteFTSRepository:
                     tokenize = 'porter unicode61 remove_diacritics 1'
                 );
                 """)
-
-                # Triggers to keep FTS in sync with documents table
+                # Populate FTS5 table from existing documents if any exist
                 conn.execute("""
-                CREATE TRIGGER IF NOT EXISTS docs_ai AFTER INSERT ON documents BEGIN
-                  INSERT INTO documents_fts(rowid, title, snippet, content)
-                  VALUES (new.rowid, new.title, new.snippet, new.content);
-                END;
+                INSERT INTO documents_fts(rowid, title, snippet, content)
+                SELECT rowid, title, snippet, content FROM documents;
                 """)
 
-                conn.execute("""
-                CREATE TRIGGER IF NOT EXISTS docs_ad AFTER DELETE ON documents BEGIN
-                  INSERT INTO documents_fts(documents_fts, rowid, title, snippet, content)
-                  VALUES('delete', old.rowid, old.title, old.snippet, old.content);
-                END;
-                """)
+            # Triggers to keep FTS in sync with documents table
+            conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS docs_ai AFTER INSERT ON documents BEGIN
+              INSERT INTO documents_fts(rowid, title, snippet, content)
+              VALUES (new.rowid, new.title, new.snippet, new.content);
+            END;
+            """)
 
-                conn.execute("""
-                CREATE TRIGGER IF NOT EXISTS docs_au AFTER UPDATE ON documents BEGIN
-                  INSERT INTO documents_fts(documents_fts, rowid, title, snippet, content)
-                  VALUES('delete', old.rowid, old.title, old.snippet, old.content);
-                  INSERT INTO documents_fts(rowid, title, snippet, content)
-                  VALUES (new.rowid, new.title, new.snippet, new.content);
-                END;
-                """)
+            conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS docs_ad AFTER DELETE ON documents BEGIN
+              INSERT INTO documents_fts(documents_fts, rowid, title, snippet, content)
+              VALUES('delete', old.rowid, old.title, old.snippet, old.content);
+            END;
+            """)
 
-    def _sanitize_fts_query(self, query_text: str) -> str:
-        """Extract alphanumeric tokens and build safe FTS5 query."""
-        tokens = re.findall(r'[\w]+', query_text.lower())
+            conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS docs_au AFTER UPDATE ON documents BEGIN
+              INSERT INTO documents_fts(documents_fts, rowid, title, snippet, content)
+              VALUES('delete', old.rowid, old.title, old.snippet, old.content);
+              INSERT INTO documents_fts(rowid, title, snippet, content)
+              VALUES (new.rowid, new.title, new.snippet, new.content);
+            END;
+            """)
+
+            # Reconcile counts if needed (ensure FTS5 has all documents indexed)
+            try:
+                cur = conn.execute("SELECT COUNT(*) FROM documents_fts;")
+                fts_c = cur.fetchone()[0]
+                cur = conn.execute("SELECT COUNT(*) FROM documents;")
+                doc_c = cur.fetchone()[0]
+                if fts_c == 0 and doc_c > 0:
+                    conn.execute("INSERT INTO documents_fts(rowid, title, snippet, content) SELECT rowid, title, snippet, content FROM documents;")
+            except Exception:
+                pass
+
+    def _build_fts_query(self, query_text: str, mode: str = "and") -> str:
+        """
+        Build safe, precision-focused FTS5 query strings.
+        - 'and': Requires ALL keywords to match (near-100% precision for specific search terms).
+        - 'phrase': Matches exact continuous multi-word phrase.
+        - 'or': Fallback matching any keyword when strict AND yields 0 documents.
+        """
+        tokens = [t for t in re.findall(r'[\w]+', query_text.lower()) if len(t) >= 1]
         if not tokens:
             return ""
-        # Combine terms with prefix wildcard for rich matching
-        return " OR ".join(f'"{t}"*' for t in tokens if len(t) >= 1)
+        if len(tokens) == 1:
+            return f'"{tokens[0]}"*'
+        if mode == "phrase":
+            return f'"{ " ".join(tokens) }"'
+        elif mode == "and":
+            return " AND ".join(f'"{t}"*' for t in tokens)
+        else:
+            return " OR ".join(f'"{t}"*' for t in tokens)
+
+    def _sanitize_fts_query(self, query_text: str) -> str:
+        """Backward-compatible helper returning AND query for strict keyword precision."""
+        return self._build_fts_query(query_text, mode="and")
 
     def index_document(self, doc_dict: Dict[str, Any]) -> bool:
         """Index or update a single document."""
@@ -263,72 +293,96 @@ class SQLiteFTSRepository:
         except Exception:
             pass
 
+        if not query_text and isinstance(query_body.get("query"), str):
+            query_text = query_body["query"]
+        elif not query_text and isinstance(query_body.get("q"), str):
+            query_text = query_body["q"]
+
         clean_q = query_text.strip()
-        fts_query = self._sanitize_fts_query(clean_q)
+        tokens = [t for t in re.findall(r'[\w]+', clean_q.lower()) if len(t) >= 1]
 
         conn = self._get_connection()
         hits: List[Dict[str, Any]] = []
         total_count = 0
 
-        if fts_query:
-            # Full-text BM25 search with ranking weights (5.0 title, 2.0 snippet, 1.0 content)
+        if tokens:
+            # 1. Build strict AND query first to ensure all specific keywords are in matched docs
+            fts_query_and = self._build_fts_query(clean_q, mode="and")
+            fts_query_or = self._build_fts_query(clean_q, mode="or")
+
+            # Check if strict AND produces results
+            try:
+                cur = conn.execute("SELECT COUNT(*) FROM documents_fts WHERE documents_fts MATCH ?", [fts_query_and])
+                count_and = cur.fetchone()[0]
+            except Exception:
+                count_and = 0
+
+            fts_query = fts_query_and if count_and > 0 else fts_query_or
+
+            # Prepare parameters for exact title and phrase match boost
+            phrase_pattern = f"%{clean_q.lower()}%"
+            primary_token_pattern = f"%{tokens[0]}%"
+
             base_where = "WHERE documents_fts MATCH ?"
             params: List[Any] = [fts_query]
 
             if domain_filter:
                 base_where += " AND d.domain = ?"
-                params.append(domain_filter)
+                params.append(domain_filter.strip().lower())
             if lang_filter:
                 base_where += " AND d.language = ?"
-                params.append(lang_filter)
+                params.append(lang_filter.strip().lower())
 
-            if domain_filter or lang_filter:
-                count_sql = f"""
-                SELECT COUNT(*) FROM documents_fts
-                JOIN documents d ON documents_fts.rowid = d.rowid
-                {base_where}
-                """
-                cur = conn.execute(count_sql, params)
-                total_count = cur.fetchone()[0]
+            # Count total matching results
+            count_sql = f"""
+            SELECT COUNT(*) FROM documents_fts
+            JOIN documents d ON documents_fts.rowid = d.rowid
+            {base_where}
+            """
+            cur = conn.execute(count_sql, params)
+            total_count = cur.fetchone()[0]
 
-                select_sql = f"""
-                SELECT 
-                    d.id, d.url, d.canonical_url, d.domain, d.title, d.snippet, d.content,
-                    d.language, d.document_type, d.published_at, d.indexed_at, d.pagerank,
-                    snippet(documents_fts, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
-                    -bm25(documents_fts, 5.0, 2.0, 1.0) AS bm25_score
+            # Candidate pool limit for reranking: fetch sufficient candidates to sort by accuracy
+            sub_limit = min(500, max(size * 5, 50))
+
+            select_sql = f"""
+            SELECT 
+                d.id, d.url, d.canonical_url, d.domain, d.title, d.snippet, d.content,
+                d.language, d.document_type, d.published_at, d.indexed_at, d.pagerank,
+                COALESCE(
+                    snippet(documents_fts, 1, '<mark>', '</mark>', '...', 25),
+                    snippet(documents_fts, 0, '<mark>', '</mark>', '...', 20),
+                    d.snippet
+                ) AS highlighted_snippet,
+                -ranked.score AS bm25_score,
+                (
+                    CASE 
+                        WHEN LOWER(d.title) = LOWER(?) THEN 100.0
+                        WHEN LOWER(d.title) LIKE ? THEN 60.0
+                        WHEN LOWER(d.title) LIKE ? THEN 30.0
+                        ELSE 0.0 
+                    END +
+                    (-ranked.score * 2.0) +
+                    (COALESCE(d.pagerank, 0.0) * 10.0)
+                ) AS accuracy_score
+            FROM (
+                SELECT rowid, bm25(documents_fts, 15.0, 4.0, 1.0) AS score
                 FROM documents_fts
-                JOIN documents d ON documents_fts.rowid = d.rowid
-                {base_where}
-                ORDER BY (bm25_score * (1.0 + COALESCE(d.pagerank, 0.0) * 0.5)) DESC
-                LIMIT ? OFFSET ?
-                """
-                cur = conn.execute(select_sql, params + [size, from_offset])
-                rows = cur.fetchall()
-            else:
-                # Fast path for multi-million document indexes:
-                cur = conn.execute("SELECT COUNT(*) FROM documents_fts WHERE documents_fts MATCH ?", [fts_query])
-                total_count = cur.fetchone()[0]
-
-                select_sql = """
-                SELECT 
-                    d.id, d.url, d.canonical_url, d.domain, d.title, d.snippet, d.content,
-                    d.language, d.document_type, d.published_at, d.indexed_at, d.pagerank,
-                    snippet(documents_fts, 1, '<mark>', '</mark>', '...', 25) AS highlighted_snippet,
-                    -ranked.score AS bm25_score
-                FROM (
-                    SELECT rowid, bm25(documents_fts, 5.0, 2.0, 1.0) AS score
-                    FROM documents_fts
-                    WHERE documents_fts MATCH ?
-                    ORDER BY score ASC
-                    LIMIT ? OFFSET ?
-                ) ranked
-                JOIN documents_fts ON documents_fts.rowid = ranked.rowid
-                JOIN documents d ON d.rowid = ranked.rowid
-                ORDER BY ranked.score ASC
-                """
-                cur = conn.execute(select_sql, [fts_query, size, from_offset])
-                rows = cur.fetchall()
+                WHERE documents_fts MATCH ?
+                ORDER BY score ASC
+                LIMIT ?
+            ) ranked
+            JOIN documents_fts ON documents_fts.rowid = ranked.rowid
+            JOIN documents d ON d.rowid = ranked.rowid
+            {base_where.replace("documents_fts MATCH ?", "1=1")}
+            ORDER BY accuracy_score DESC
+            LIMIT ? OFFSET ?
+            """
+            cur = conn.execute(
+                select_sql,
+                [clean_q, phrase_pattern, primary_token_pattern, fts_query, sub_limit] + params[1:] + [size, from_offset]
+            )
+            rows = cur.fetchall()
 
             for r in rows:
                 doc_dict = {
@@ -347,7 +401,7 @@ class SQLiteFTSRepository:
                 }
                 hl = r["highlighted_snippet"]
                 highlight_dict = {"content": [hl]} if hl else {}
-                score = round(float(r["bm25_score"] or 1.0) * (1.0 + float(r["pagerank"] or 0.0) * 0.5), 4)
+                score = round(float(r["accuracy_score"] if "accuracy_score" in r.keys() else (r["bm25_score"] or 1.0)), 4)
 
                 hits.append({
                     "_id": r["id"],

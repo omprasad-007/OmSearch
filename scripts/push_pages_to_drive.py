@@ -15,6 +15,7 @@ import hashlib
 import webbrowser
 import urllib.parse
 import urllib.request
+import urllib.error
 import ssl
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,8 +40,8 @@ def load_env_vars():
     return env_data
 
 CONFIG = load_env_vars()
-CLIENT_ID = CONFIG.get("GOOGLE_CLIENT_ID", "260412082226-v5lqr7omi1ofh1rdo3svjkui4lildcit.apps.googleusercontent.com")
-CLIENT_SECRET = CONFIG.get("GOOGLE_CLIENT_SECRET", "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")
+CLIENT_ID = CONFIG.get("GOOGLE_CLIENT_ID", "")
+CLIENT_SECRET = CONFIG.get("GOOGLE_CLIENT_SECRET", "")
 REDIRECT_URI = "http://127.0.0.1:8000/api/v1/storage/google-drive/callback"
 SCOPES = "https://www.googleapis.com/auth/drive.file"
 TOKEN_FILE = _data_dir / "gdrive_token.json"

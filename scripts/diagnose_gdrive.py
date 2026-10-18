@@ -41,8 +41,8 @@ def load_env_vars():
     return env_data
 
 CONFIG = load_env_vars()
-CLIENT_ID = CONFIG.get("GOOGLE_CLIENT_ID", "260412082226-v5lqr7omi1ofh1rdo3svjkui4lildcit.apps.googleusercontent.com")
-CLIENT_SECRET = CONFIG.get("GOOGLE_CLIENT_SECRET", "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")
+CLIENT_ID = CONFIG.get("GOOGLE_CLIENT_ID", "")
+CLIENT_SECRET = CONFIG.get("GOOGLE_CLIENT_SECRET", "")
 
 def get_token():
     if not TOKEN_FILE.exists():

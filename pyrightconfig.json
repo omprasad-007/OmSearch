@@ -1,0 +1,11 @@
+{
+  "include": [
+    "backend",
+    "crawler",
+    "scripts"
+  ],
+  "extraPaths": [
+    "backend",
+    "."
+  ]
+}

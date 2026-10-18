@@ -1,0 +1,15 @@
+{
+  "status": "active_running",
+  "updated_at": "2026-10-18T06:17:12.739242+00:00",
+  "elapsed_seconds": 1219.8,
+  "total_documents_archived": 17051000,
+  "total_batches_archived": 6274,
+  "total_cloud_bytes_archived": 2281913367,
+  "formatted_cloud_storage": "2.13 GB",
+  "live_crawled_pages_count": 26845,
+  "documents_per_second": 553.85,
+  "laptop_free_disk_gb": 122.67,
+  "local_spool_overhead_bytes": 0,
+  "target_storage_pool": "Google Drive (OM-Search-Data, Google One 5 TB)",
+  "disk_protection": "STRICT_ZERO_LOCAL_ACCUMULATION"
+}

@@ -35,8 +35,11 @@ ENV/
 om_search_local.db
 om_search_fts.db
 om_fallback_store.json
-om_inverted_index.pkl
 data/
+!data/crawled_batch_live.json
+!data/manifest_crawled_batch_live.json
+!data/drive_ingestion_live_status.json
+data/temp_drive_spool/
 backend/data/
 *.log
 

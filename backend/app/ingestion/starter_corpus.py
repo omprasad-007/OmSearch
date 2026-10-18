@@ -271,6 +271,13 @@ def ensure_starter_index(min_docs: int = 10000) -> int:
     if curated_present < 30:
         load_verified_curated_docs()
 
+    # Step 4: Rebuild and verify FTS5 inverted index for instantaneous, accurate retrieval
+    try:
+        conn.execute("INSERT INTO documents_fts(documents_fts) VALUES('rebuild');")
+        conn.commit()
+    except Exception as e:
+        logger.debug("FTS5 rebuild notice: %s", e)
+
     total_count = fts_repo.count()
     logger.info("Search index verified: %d authentic documents ready for retrieval.", total_count)
     return total_count

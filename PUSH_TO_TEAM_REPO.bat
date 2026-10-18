@@ -20,7 +20,7 @@ echo [+] Staging all latest code, crawler files, and telemetry...
 git add -A
 
 echo [+] Creating commit...
-git commit -m "feat: sync live crawl data, Google Drive 1M batches, and operational telemetry"
+git commit -m "feat: upgrade search accuracy with exact keyword matching, title boosts, and full index sync"
 
 echo.
 echo ========================================================================

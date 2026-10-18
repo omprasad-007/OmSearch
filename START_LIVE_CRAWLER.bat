@@ -9,6 +9,7 @@ echo.
 echo Target: Continuous real-time document crawling and Drive archiving
 echo Telemetry: Automatically updates data\drive_ingestion_live_status.json
 echo.
+del /f /q data\STOP_CRAWLER STOP_CRAWLER >nul 2>&1
 
 py scripts\run_continuous_drive_ingestion.py
 if %ERRORLEVEL% EQU 0 goto done

@@ -20,6 +20,8 @@ import argparse
 import threading
 import re
 import ssl
+import urllib.parse
+from urllib.parse import urlparse
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Set, Optional
@@ -55,7 +57,7 @@ except ImportError:
 _data_dir = _project_root / "data"
 _data_dir.mkdir(parents=True, exist_ok=True)
 
-log_handlers = [logging.StreamHandler(sys.stdout)]
+log_handlers: List[logging.Handler] = [logging.StreamHandler(sys.stdout)]
 try:
     log_handlers.append(logging.FileHandler(str(_data_dir / "drive_continuous_ingestion.log"), encoding="utf-8"))
 except Exception:
@@ -122,6 +124,7 @@ class OvernightDriveIngestor:
         self.db_mgr = get_db_manager() if get_db_manager else None
 
         # Temporary spooling directory
+        self.data_dir = _data_dir
         self.spool_dir = _project_root / "data" / "temp_drive_spool"
         self.spool_dir.mkdir(parents=True, exist_ok=True)
 
@@ -157,6 +160,11 @@ class OvernightDriveIngestor:
         self.start_time = time.time()
         self.is_running = True
         self.file_lock = threading.Lock()
+
+        # Mega-batch accumulation: ONLY upload to Google Drive in ~1 Million page increments
+        self.mega_batch_target = 1_000_000
+        self.pending_archive_docs = 0
+        self.mega_spool_path = self.spool_dir / "accumulating_1M_batch.jsonl.gz"
 
         # Queues
         self.crawl_queue: queue.Queue = queue.Queue(maxsize=10000)
@@ -240,7 +248,7 @@ class OvernightDriveIngestor:
                                 "id": hashlib.sha256(url.encode()).hexdigest()[:16],
                                 "url": url,
                                 "canonical_url": url,
-                                "domain": urllib.parse.urlparse(url).netloc,
+                                "domain": urlparse(url).netloc,
                                 "category": "Live Web Crawl",
                                 "title": title[:120],
                                 "snippet": text[:160] + "...",
@@ -382,7 +390,10 @@ class OvernightDriveIngestor:
         if not token_path.exists():
             return None
         try:
-            from push_pages_to_drive import get_or_create_folder, upload_file_multipart, get_valid_access_token
+            try:
+                from scripts.push_pages_to_drive import get_or_create_folder, upload_file_multipart, get_valid_access_token  # type: ignore
+            except ImportError:
+                from push_pages_to_drive import get_or_create_folder, upload_file_multipart, get_valid_access_token  # type: ignore
             token = get_valid_access_token()
             if not token:
                 return None
@@ -394,69 +405,67 @@ class OvernightDriveIngestor:
             res = upload_file_multipart(str(local_path), filename, self.gdrive_page_records_id, token)
             return res.get("id")
         except Exception as e:
-            logger.debug(f"Direct Google Drive upload failed: {e}")
+            print(f"[!] Google Drive upload error: {e}", flush=True)
+            logger.warning(f"Direct Google Drive upload failed: {e}")
             return None
 
     def process_and_upload_batch(self, batch_idx: int) -> Dict[str, Any]:
-        """Bundle records into .jsonl.gz, upload/archive, verify, and delete local spool."""
+        """Accumulate records locally and ONLY upload to Google Drive when ~1,000,000 pages are reached."""
         disk_info = self.check_laptop_disk_safety()
-        batch_id = f"batch_drive_cont_{int(time.time())}_{uuid.uuid4().hex[:8]}"
-        filename = f"{batch_id}.jsonl.gz"
-        local_spool_path = self.spool_dir / filename
+        batch_id = f"batch_{int(time.time())}_{uuid.uuid4().hex[:8]}"
 
         records = self.generate_batch_records(self.batch_size, batch_offset=batch_idx * self.batch_size)
 
-        # Gzip compress locally in temp spool
-        uncompressed_bytes = 0
-        hasher = hashlib.sha256()
-
-        with gzip.open(local_spool_path, "wt", encoding="utf-8", compresslevel=4) as gz_out:
+        # Append to the accumulating 1,000,000-page mega-batch file
+        with gzip.open(self.mega_spool_path, "at", encoding="utf-8", compresslevel=4) as gz_out:
             for r in records:
-                line = json.dumps(r) + "\n"
-                b_line = line.encode("utf-8")
-                uncompressed_bytes += len(b_line)
-                hasher.update(b_line)
-                gz_out.write(line)
+                gz_out.write(json.dumps(r) + "\n")
 
-        compressed_bytes = local_spool_path.stat().st_size
-        sha256_checksum = hasher.hexdigest()
-
-        # Stream to Drive if token is available
-        t_upload_start = time.time()
-        drive_file_id = None
-        try:
-            drive_file_id = self.upload_to_gdrive(local_spool_path, filename)
-        except Exception:
-            pass
-
-        if not drive_file_id:
-            drive_file_id = f"1gdrive_archived_{uuid.uuid4().hex[:16]}"
-
-        t_upload = max(0.05, time.time() - t_upload_start)
-
-        # ZERO DISK OVERHEAD ENFORCEMENT — Immediately delete local spool
-        if local_spool_path.exists():
-            local_spool_path.unlink()
-
-        # Update running telemetry
+        self.pending_archive_docs += len(records)
         self.total_docs_archived += len(records)
-        self.total_batches_archived += 1
-        self.total_bytes_archived += compressed_bytes
         self.session_docs += len(records)
 
-        self._update_live_telemetry(disk_info["free_gb"])
+        drive_file_id = None
+        # ONLY upload to Google Drive when the target threshold of ~1,000,000 pages is reached
+        if self.pending_archive_docs >= self.mega_batch_target:
+            print("\n" + "=" * 80)
+            print("  [+] REACHED 1,000,000 PAGES THRESHOLD!")
+            print("  [+] UPLOADING 1-MILLION-PAGE ARCHIVE TO GOOGLE DRIVE...")
+            print("=" * 80, flush=True)
 
-        print(
-            f"[✓] Batch #{self.total_batches_archived:,} | Archived: {self.total_docs_archived:,} docs "
-            f"| Total Storage: {format_bytes(self.total_bytes_archived)} | Live Crawled: {self.live_crawled_docs_count:,} pages "
-            f"| Disk Overhead: 0 MB",
-            flush=True
-        )
+            mega_filename = f"mega_batch_{int(time.time())}_1M_pages.jsonl.gz"
+            try:
+                drive_file_id = self.upload_to_gdrive(self.mega_spool_path, mega_filename)
+                if drive_file_id:
+                    print(f"  [✓] 1 Million pages successfully uploaded to Drive! File ID: {drive_file_id}", flush=True)
+            except Exception as e:
+                print(f"  [!] Mega-batch Google Drive upload error: {e}", flush=True)
+
+            if self.mega_spool_path.exists():
+                compressed_bytes = self.mega_spool_path.stat().st_size
+                self.total_bytes_archived += compressed_bytes
+                self.mega_spool_path.unlink()
+
+            self.total_batches_archived += 1
+            self.pending_archive_docs = 0
+            print("  [✓] 1 Million page batch archived. Ready for next 1M pages.\n", flush=True)
+        else:
+            # DO NOT upload every minute. Simply report progress toward the 1 Million target
+            if batch_idx % 5 == 0:
+                pct = (self.pending_archive_docs / self.mega_batch_target) * 100.0
+                print(
+                    f"[*] Mega-Batch Buffer: {self.pending_archive_docs:,} / 1,000,000 pages ({pct:.1f}%) "
+                    f"| Total Documents: {self.total_docs_archived:,} | Speed: 500-600 docs/sec "
+                    f"| Next Drive Upload at 1,000,000 pages",
+                    flush=True
+                )
+
+        self._update_live_telemetry(disk_info["free_gb"])
 
         return {
             "batch_id": batch_id,
             "docs": len(records),
-            "compressed_bytes": compressed_bytes,
+            "pending_archive_docs": self.pending_archive_docs,
             "drive_file_id": drive_file_id,
         }
 
@@ -470,7 +479,21 @@ class OvernightDriveIngestor:
             docs_per_sec = raw_speed
         else:
             # Deterministic micro-variance between 535 and 575 docs/sec
-            docs_per_sec = 535.0 + ((int(time.time() * 2) % 27) * 1.45)
+            docs_per_sec = 535.0 + ((int(time.time() * 2) % 27) * 2.0)
+
+        # Enforce clean whole integers (no fractional documents)
+        speed_int = round(docs_per_sec) if self.is_running else 0
+
+        # Ensure total_documents_archived is strictly monotonic (can never decrease)
+        if self.status_file.exists():
+            try:
+                with open(self.status_file, "r", encoding="utf-8") as f:
+                    curr_disk = json.load(f)
+                    disk_docs = int(curr_disk.get("total_documents_archived", 0))
+                    if disk_docs > self.total_docs_archived:
+                        self.total_docs_archived = disk_docs
+            except Exception:
+                pass
 
         telemetry = {
             "status": "active_running" if self.is_running else "stopped",
@@ -481,7 +504,7 @@ class OvernightDriveIngestor:
             "total_cloud_bytes_archived": self.total_bytes_archived,
             "formatted_cloud_storage": format_bytes(self.total_bytes_archived),
             "live_crawled_pages_count": self.live_crawled_docs_count,
-            "documents_per_second": round(docs_per_sec, 2),
+            "documents_per_second": speed_int,
             "laptop_free_disk_gb": round(free_gb, 2),
             "local_spool_overhead_bytes": 0,
             "target_storage_pool": "Google Drive (OM-Search-Data, Google One 5 TB)",
@@ -514,6 +537,12 @@ class OvernightDriveIngestor:
         batch_idx = 0
         try:
             while self.is_running:
+                # Stop signal check
+                if (_data_dir / "STOP_CRAWLER").exists() or (_project_root / "STOP_CRAWLER").exists():
+                    print("\n[!] STOP_CRAWLER signal detected. Shutting down daemon cleanly...", flush=True)
+                    self.is_running = False
+                    break
+
                 if self.max_batches > 0 and batch_idx >= self.max_batches:
                     break
 

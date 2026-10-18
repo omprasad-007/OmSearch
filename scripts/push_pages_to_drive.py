@@ -267,7 +267,7 @@ def get_or_create_folder(folder_name, parent_id=None, token=None):
 
 
 def upload_file_multipart(local_path, filename, folder_id, token):
-    boundary = f"===om_boundary_{uuid.uuid4().hex}==="
+    boundary = f"om_boundary_{uuid.uuid4().hex}"
     meta = {
         "name": filename,
         "parents": [folder_id],
@@ -277,14 +277,18 @@ def upload_file_multipart(local_path, filename, folder_id, token):
         file_bytes = f.read()
     
     body = bytearray()
-    body.extend(f"--{boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{json.dumps(meta)}\r\n".encode("utf-8"))
-    body.extend(f"--{boundary}\r\nContent-Type: application/gzip\r\n\r\n".encode("utf-8"))
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(b"Content-Type: application/json; charset=UTF-8\r\n\r\n")
+    body.extend(json.dumps(meta).encode("utf-8"))
+    body.extend(b"\r\n")
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(b"Content-Type: application/gzip\r\n\r\n")
     body.extend(file_bytes)
-    body.extend(f"\r\n--{boundary}--\r\n".encode("utf-8"))
+    body.extend(b"\r\n")
+    body.extend(f"--{boundary}--\r\n".encode("utf-8"))
     
     headers = {
         "Content-Type": f"multipart/related; boundary={boundary}",
-        "Content-Length": str(len(body)),
     }
     
     res = call_drive_api(

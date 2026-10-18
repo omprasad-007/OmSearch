@@ -1,15 +1,17 @@
 {
   "status": "active_running",
-  "updated_at": "2026-10-18T11:04:22.470885+00:00",
-  "elapsed_seconds": 2281.3,
-  "total_documents_archived": 25505500,
-  "total_batches_archived": 6929,
-  "total_cloud_bytes_archived": 3128290250,
-  "formatted_cloud_storage": "2.91 GB",
-  "live_crawled_pages_count": 35181,
-  "documents_per_second": 2715,
-  "laptop_free_disk_gb": 122.59,
+  "updated_at": "2026-10-18T11:21:31.038419+00:00",
+  "elapsed_seconds": 3394.8,
+  "total_documents_archived": 27905500,
+  "total_batches_archived": 6932,
+  "total_cloud_bytes_archived": 4321827376,
+  "formatted_cloud_storage": "4.03 GB",
+  "live_crawled_pages_count": 35825,
+  "documents_per_second": 558.42,
+  "laptop_free_disk_gb": 122.67,
   "local_spool_overhead_bytes": 0,
-  "target_storage_pool": "Google Drive (OM-Search-Data, Google One 5 TB)",
-  "disk_protection": "STRICT_ZERO_LOCAL_ACCUMULATION"
+  "target_storage_pool": "Google Drive (OM-Search-Data, omprasadbhaskar07@gmail.com)",
+  "disk_protection": "STRICT_ZERO_LOCAL_ACCUMULATION",
+  "google_drive_verified": true,
+  "verified_at": "2026-10-18T11:21:31.038461+00:00"
 }

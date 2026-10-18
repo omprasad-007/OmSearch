@@ -182,6 +182,73 @@ def load_and_index_crawled_urls() -> int:
     return len(urls)
 
 
+def index_live_crawled_pages_from_json() -> int:
+    """Index all rich live crawled web pages from crawled_pages.json into SQLite FTS5."""
+    fts_repo = get_sqlite_fts_repo()
+    candidates = [
+        Path(__file__).resolve().parents[2] / "frontend" / "public" / "crawled_pages.json",
+        Path("frontend/public/crawled_pages.json"),
+        Path(__file__).resolve().parents[2] / "data" / "crawled_batch_live.json",
+        Path("data/crawled_batch_live.json"),
+    ]
+    json_file = None
+    for c in candidates:
+        if c.exists() and c.stat().st_size > 1000:
+            json_file = c
+            break
+
+    if not json_file:
+        return 0
+
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            items = json.load(f)
+    except Exception as e:
+        logger.warning("Could not read %s: %s", json_file, e)
+        return 0
+
+    if not items:
+        return 0
+
+    docs = []
+    now_iso = datetime.now(timezone.utc).isoformat()
+    for item in items:
+        url = item.get("url")
+        if not url:
+            continue
+        title = item.get("title") or url
+        snippet = item.get("snippet") or ""
+        content = item.get("content") or f"{title}\n\n{snippet}"
+        domain = item.get("domain") or urlparse(url).netloc.lower()
+        doc_id = item.get("id") or hashlib.sha256(url.encode()).hexdigest()[:16]
+
+        docs.append({
+            "id": doc_id,
+            "url": url,
+            "canonical_url": item.get("canonical_url", url),
+            "domain": domain,
+            "category": item.get("category", "Live Web Crawl"),
+            "title": title,
+            "snippet": snippet,
+            "content": content,
+            "language": item.get("language", "en"),
+            "document_type": "live_web_page",
+            "published_at": item.get("published_at", "2026-01-01T00:00:00Z"),
+            "indexed_at": item.get("indexed_at", now_iso),
+            "pagerank": float(item.get("pagerank", 0.85)),
+        })
+
+        if len(docs) >= 500:
+            fts_repo.index_documents_bulk(docs)
+            docs = []
+
+    if docs:
+        fts_repo.index_documents_bulk(docs)
+
+    logger.info("Successfully indexed %d live crawled pages from %s into FTS5 index!", len(items), json_file.name)
+    return len(items)
+
+
 def ensure_starter_index(min_docs: int = 10000) -> int:
     """
     Ensure the search index has genuine crawled pages and verified authoritative documents.
@@ -193,7 +260,7 @@ def ensure_starter_index(min_docs: int = 10000) -> int:
     # Step 1: Purge any legacy fake URLs from database
     purge_legacy_fake_urls()
 
-    # Step 2: Index live crawled real-web pages if not already present
+    # Step 2: Index live crawled real-web pages
     conn = fts_repo._get_connection()
     cur = conn.execute("SELECT COUNT(*) FROM documents WHERE document_type = 'live_web_page';")
     crawled_present = cur.fetchone()[0]
@@ -201,6 +268,9 @@ def ensure_starter_index(min_docs: int = 10000) -> int:
     if crawled_present < 1000:
         logger.info("Indexing live crawled real-web pages into FTS5 index...")
         load_and_index_crawled_urls()
+
+    # Always index newly crawled pages from live batches
+    index_live_crawled_pages_from_json()
 
     # Step 3: Index verified authoritative documentation for top topics
     cur = conn.execute("SELECT COUNT(*) FROM documents WHERE document_type = 'official_doc';")

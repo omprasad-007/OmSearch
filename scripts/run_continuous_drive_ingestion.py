@@ -349,6 +349,36 @@ class OvernightDriveIngestor:
                 except Exception as e:
                     logger.debug(f"Failed to append to {target_path}: {e}")
 
+            # Direct SQLite Search Index Insertion (ensures immediate searchability)
+            try:
+                import sqlite3
+                db_candidates = [
+                    _project_root / "backend" / "om_search_local.db",
+                    _project_root / "om_search_local.db",
+                ]
+                for db_file in db_candidates:
+                    if db_file.exists():
+                        with sqlite3.connect(str(db_file), timeout=5.0) as conn:
+                            conn.execute("""
+                            INSERT OR IGNORE INTO documents (id, url, canonical_url, domain, title, snippet, content, language, document_type, published_at, indexed_at, pagerank)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                            """, (
+                                doc.get("id"),
+                                doc.get("url"),
+                                doc.get("canonical_url", doc.get("url")),
+                                doc.get("domain", ""),
+                                doc.get("title", ""),
+                                doc.get("snippet", ""),
+                                doc.get("content", ""),
+                                doc.get("language", "en"),
+                                "live_web_page",
+                                doc.get("published_at", datetime.now(timezone.utc).isoformat()),
+                                doc.get("indexed_at", datetime.now(timezone.utc).isoformat()),
+                                float(doc.get("pagerank", 0.85)),
+                            ))
+            except Exception:
+                pass
+
             manifest_file = _project_root / "data" / "manifest_crawled_batch_live.json"
             public_manifest = _project_root / "frontend" / "public" / "manifest_crawled_batch_live.json"
             for m_path in [manifest_file, public_manifest]:
